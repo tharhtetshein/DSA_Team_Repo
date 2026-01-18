@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="BoardGameManager/BoardGameManager.vcxproj" />
+  <Project Path="BoardGameManager/BoardGameManager.vcxproj" Id="70704e39-5634-4c05-913c-d85ff3402c49" />
 </Solution>

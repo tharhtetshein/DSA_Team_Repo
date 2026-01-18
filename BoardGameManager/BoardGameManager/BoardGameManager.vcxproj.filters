@@ -42,6 +42,12 @@
     <ClCompile Include="TransactionService.cpp">
       <Filter>services</Filter>
     </ClCompile>
+    <ClCompile Include="HashTable.cpp">
+      <Filter>ds</Filter>
+    </ClCompile>
+    <ClCompile Include="AdminService.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Member.h">
@@ -60,6 +66,15 @@
       <Filter>services</Filter>
     </ClInclude>
     <ClInclude Include="TransactionService.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>ds</Filter>
+    </ClInclude>
+    <ClInclude Include="HashTable.h">
+      <Filter>ds</Filter>
+    </ClInclude>
+    <ClInclude Include="AdminService.h">
       <Filter>services</Filter>
     </ClInclude>
   </ItemGroup>

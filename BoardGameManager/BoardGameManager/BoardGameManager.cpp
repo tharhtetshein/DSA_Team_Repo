@@ -1,6 +1,8 @@
 #include <iostream>
 #include "MemberService.h"
 #include "TransactionService.h"
+#include "HashTable.h"
+#include "AdminService.h"
 
 int main() {
     MemberService ms;
