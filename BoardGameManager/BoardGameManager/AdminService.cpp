@@ -1,21 +1,26 @@
 #include "AdminService.h"
 
-AdminService::AdminService(HashTable* table)
+AdminService::AdminService(GameService* service)
 {
-    gameTable = table;
+    gameService = service;
 }
 
-bool AdminService::addGame(const Game& game)
+bool AdminService::addGame(const char* title, int minPlayers, int maxPlayers, int year, int copies)
 {
-    return false; // Phase 0 stub
+    if (gameService == nullptr)
+    {
+        return false;
+    }
+
+    return gameService->addNewGame(title, minPlayers, maxPlayers, year, copies);
 }
 
 bool AdminService::removeGame(int gameID)
 {
-    return false; // Phase 0 stub
-}
+    if (gameService == nullptr)
+    {
+        return false;
+    }
 
-void AdminService::showBorrowSummary()
-{
-    // Phase 0 stub
+    return gameService->removeGame(gameID);
 }

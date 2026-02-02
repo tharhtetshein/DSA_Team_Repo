@@ -130,6 +130,7 @@
     <ClCompile Include="AdminService.cpp" />
     <ClCompile Include="BoardGameManager.cpp" />
     <ClCompile Include="CircularQueue.cpp" />
+    <ClCompile Include="GameService.cpp" />
     <ClCompile Include="HashTable.cpp" />
     <ClCompile Include="MemberList.cpp" />
     <ClCompile Include="MemberService.cpp" />
@@ -140,11 +141,15 @@
     <ClInclude Include="BorrowEvent.h" />
     <ClInclude Include="CircularQueue.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameService.h" />
     <ClInclude Include="HashTable.h" />
     <ClInclude Include="Member.h" />
     <ClInclude Include="MemberList.h" />
     <ClInclude Include="MemberService.h" />
     <ClInclude Include="TransactionService.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\games.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

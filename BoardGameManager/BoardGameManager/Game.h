@@ -8,6 +8,20 @@ enum class GameStatus
     REMOVED
 };
 
+struct ReviewNode
+{
+    int memberId;
+    int rating;
+    char text[256];
+    ReviewNode* next;
+
+    ReviewNode()
+        : memberId(0), rating(0), next(nullptr)
+    {
+        text[0] = '\0';
+    }
+};
+
 struct Game
 {
     int gameID;
@@ -22,6 +36,9 @@ struct Game
 
     int ratingSum;
     int ratingCount;
+
+    ReviewNode* reviewsHead;
+    int reviewCount;
 
     GameStatus status;
 };
