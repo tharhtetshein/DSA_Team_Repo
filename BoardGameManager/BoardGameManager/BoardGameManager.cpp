@@ -134,22 +134,40 @@ static bool tryLoadCsvFromParents(GameService& gs)
     return false;
 }
 
-static void printGameShort(const Game* g, const GameService& gs)
+static void printGameShort(const Game* g, const GameService& gs, bool isAdmin)
 {
     if (g == nullptr)
     {
         return;
     }
 
-    std::cout << "ID: " << g->gameID << " | " << g->title
-        << " | Players: " << g->minPlayers << "-" << g->maxPlayers
-        << " | Year: " << g->yearPublished
-        << " | Copies: " << g->copiesAvailable << "/" << g->copiesTotal
-        << " | Avg Rating: " << gs.getAverageRating(g)
-        << " | Reviews: " << g->reviewCount << "\n";
+    // Admin sees ID and copies; members do not.
+    if (isAdmin)
+    {
+        std::cout << "ID: " << g->gameID << " | " << g->title
+            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
+            << " | Year: " << g->yearPublished
+            << " | Copies: " << g->copiesAvailable << "/" << g->copiesTotal
+            << " | Avg Rating: " << gs.getAverageRating(g)
+            << " | Reviews: " << g->reviewCount << "\n";
+    }
+    else
+    {
+        std::cout << g->title
+            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
+            << " | Year: " << g->yearPublished
+            << " | Avg Rating: " << gs.getAverageRating(g)
+            << " | Reviews: " << g->reviewCount << "\n";
+    }
 }
 
-static int selectGameByName(GameService& gs)
+static void printGameDetails(const Game* g, const GameService& gs, bool isAdmin)
+{
+    // Reuse printGameShort semantics for detailed display
+    printGameShort(g, gs, isAdmin);
+}
+
+static int selectGameByName(GameService& gs, bool isAdmin = true)
 {
     char query[101];
     readLine("Enter part of the game name: ", query, sizeof(query));
@@ -169,74 +187,79 @@ static int selectGameByName(GameService& gs)
     std::cout << "Matches:\n";
     for (int i = 0; i < count; i++)
     {
-        printGameShort(matches[i], gs);
+        printGameShort(matches[i], gs, isAdmin);
     }
 
+    // Keep existing selection-by-ID behavior.
     int id = readInt("Enter Game ID from the list: ");
     delete[] matches;
     return id;
 }
 
-static void showGameDetails(GameService& gs)
+static void showGameDetails(GameService& gs, bool isAdmin)
 {
-    int choice = readInt("Find by (1) ID or (2) name: ");
-    int gameId = -1;
-
-    if (choice == 1)
-    {
-        gameId = readInt("Enter Game ID: ");
-    }
-    else if (choice == 2)
-    {
-        gameId = selectGameByName(gs);
-    }
-
-    if (gameId <= 0)
+    // Ask for a name query and immediately display the first matched game's details.
+    char query[101];
+    readLine("Find by name: ", query, sizeof(query));
+    if (query[0] == '\0')
     {
         return;
     }
 
-    Game* g = gs.findById(gameId);
-    if (g == nullptr)
+    Game** matches = nullptr;
+    int count = gs.findGamesByTitleContains(query, matches);
+    if (count <= 0)
     {
-        std::cout << "Game not found.\n";
+        std::cout << "No matching games found.\n";
         return;
     }
+
+    // Show the first match's details (per user's earlier request).
+    if (count > 1)
+    {
+        std::cout << "Multiple matches found. Showing the best / first match:\n";
+    }
+
+    Game* g = matches[0];
+    delete[] matches;
 
     std::cout << "Game Details\n";
-    printGameShort(g, gs);
+    printGameDetails(g, gs, isAdmin);
 }
 
-static void showGameReviews(GameService& gs, MemberService& ms)
+static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
 {
-    int choice = readInt("Find by (1) ID or (2) name: ");
-    int gameId = -1;
-
-    if (choice == 1)
-    {
-        gameId = readInt("Enter Game ID: ");
-    }
-    else if (choice == 2)
-    {
-        gameId = selectGameByName(gs);
-    }
-
-    if (gameId <= 0)
+    // Simplified: ask for name, show first match, display reviews without asking for sort or ID.
+    char query[101];
+    readLine("Find by name: ", query, sizeof(query));
+    if (query[0] == '\0')
     {
         return;
     }
 
-    ReviewSortOption sortOption = REVIEW_SORT_NONE;
-    int sortChoice = readInt("Sort reviews by (1) Rating desc, (2) Member ID asc, (0) None: ");
-    if (sortChoice == 1)
+    Game** matches = nullptr;
+    int countMatches = gs.findGamesByTitleContains(query, matches);
+    if (countMatches <= 0)
     {
-        sortOption = REVIEW_SORT_RATING_DESC;
-    }
-    else if (sortChoice == 2)
-    {
-        sortOption = REVIEW_SORT_MEMBER_ASC;
+        std::cout << "No matching games found.\n";
+        return;
     }
 
+    Game* selected = matches[0];
+    if (countMatches > 1)
+    {
+        std::cout << "Multiple matches found. Showing the best / first match:\n";
+    }
+
+    std::cout << "Matches:\n";
+    // show the first match (consistent with showGameDetails behavior)
+    printGameShort(selected, gs, isAdmin);
+
+    int gameId = selected->gameID;
+    delete[] matches;
+
+    // Always use no-sorting (natural order) and display reviews immediately
+    ReviewSortOption sortOption = REVIEW_SORT_NONE;
     ReviewNode** list = nullptr;
     int count = gs.getReviewsForGame(gameId, list, sortOption);
     if (count <= 0)
@@ -270,7 +293,38 @@ static void showGameReviews(GameService& gs, MemberService& ms)
 
 static void writeGameReview(GameService& gs, int memberId)
 {
-    int gameId = readInt("Game ID to review: ");
+    // Prompt for a name (per request) and select the first match automatically.
+    char query[101];
+    readLine("Name of game to review: ", query, sizeof(query));
+    if (query[0] == '\0')
+    {
+        return;
+    }
+
+    Game** matches = nullptr;
+    int count = gs.findGamesByTitleContains(query, matches);
+    if (count <= 0)
+    {
+        std::cout << "No matching games found.\n";
+        return;
+    }
+
+    std::cout << "Matches:\n";
+    for (int i = 0; i < count; i++)
+    {
+        printGameShort(matches[i], gs, false);
+    }
+
+    // Do not ask for Game ID — use the first match's ID and continue to rating/review.
+    Game* selected = matches[0];
+    if (count > 1)
+    {
+        std::cout << "Multiple matches found. Using the first match: " << selected->title
+            << " (ID " << selected->gameID << ")\n";
+    }
+    int gameId = selected->gameID;
+    delete[] matches;
+
     int rating = readInt("Rating (1-10): ");
     char text[256];
     readLine("Review text (optional): ", text, sizeof(text));
@@ -285,13 +339,13 @@ static void writeGameReview(GameService& gs, int memberId)
     }
 }
 
-static void listGamesByPlayers(GameService& gs)
+static void listGamesByPlayers(GameService& gs, bool isAdmin = true)
 {
     int players = readInt("Enter number of players: ");
-    int sortChoice = readInt("Sort by (1) Year asc, (2) Avg rating desc, (0) None: ");
+    int sortChoice = readInt("Display list by:\n(1) Year of publication ascending\n(2) Average rating\n");
     SortOption option = SORT_NONE;
     if (sortChoice == 1) option = SORT_YEAR_ASC;
-    if (sortChoice == 2) option = SORT_RATING_DESC;
+    else if (sortChoice == 2) option = SORT_RATING_DESC;
 
     Game** list = nullptr;
     int count = gs.listGamesByPlayers(players, option, list);
@@ -304,12 +358,12 @@ static void listGamesByPlayers(GameService& gs)
     std::cout << "Games for " << players << " players:\n";
     for (int i = 0; i < count; i++)
     {
-        printGameShort(list[i], gs);
+        printGameShort(list[i], gs, isAdmin);
     }
     delete[] list;
 }
 
-static void listAllGames(GameService& gs)
+static void listAllGames(GameService& gs, bool isAdmin = true)
 {
     Game** list = nullptr;
     int count = gs.getAllGames(list);
@@ -321,7 +375,7 @@ static void listAllGames(GameService& gs)
 
     for (int i = 0; i < count; i++)
     {
-        printGameShort(list[i], gs);
+        printGameShort(list[i], gs, isAdmin);
     }
     delete[] list;
 }
@@ -442,19 +496,20 @@ int main()
                 }
                 else if (a == 6)
                 {
-                    listAllGames(gs);
+                    listAllGames(gs, true);
                 }
                 else if (a == 7)
                 {
-                    showGameDetails(gs);
+                    // admin view should show ID and copies
+                    showGameDetails(gs, true);
                 }
                 else if (a == 8)
                 {
-                    listGamesByPlayers(gs);
+                    listGamesByPlayers(gs, true);
                 }
                 else if (a == 9)
                 {
-                    showGameReviews(gs, ms);
+                    showGameReviews(gs, ms, true);
                 }
             }
         }
@@ -497,7 +552,7 @@ int main()
                     }
                     else if (mode == 2)
                     {
-                        gameId = selectGameByName(gs);
+                        gameId = selectGameByName(gs, false);
                     }
 
                     if (gameId <= 0)
@@ -554,15 +609,16 @@ int main()
                 }
                 else if (m == 6)
                 {
-                    showGameDetails(gs);
+                    // member view should hide ID and copies
+                    showGameDetails(gs, false);
                 }
                 else if (m == 7)
                 {
-                    listGamesByPlayers(gs);
+                    listGamesByPlayers(gs, false);
                 }
                 else if (m == 8)
                 {
-                    showGameReviews(gs, ms);
+                    showGameReviews(gs, ms, false);
                 }
             }
         }
