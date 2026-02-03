@@ -7,6 +7,7 @@
 #include <cctype>
 #include <iomanip>
 #include <cstdio>
+
 #include "MemberService.h"
 #include "TransactionService.h"
 #include "AdminService.h"
@@ -426,6 +427,7 @@ static bool tryLoadCsvFromParents(GameService& gs)
     return false;
 }
 
+// Tries to find games.txt by walking up. Always sets some output path.
 static bool resolveGamesPath(char* outPath, int size)
 {
     if (outPath == nullptr || size <= 0)
@@ -467,30 +469,7 @@ static bool resolveGamesPath(char* outPath, int size)
         }
     }
 
-    strncpy_s(cur, sizeof(cur), cwd, _TRUNCATE);
-    cur[sizeof(cur) - 1] = '\0';
-    for (int depth = 0; depth < 8; depth++)
-    {
-        char marker[260];
-        joinPath(marker, sizeof(marker), cur, "BoardGameManager.vcxproj");
-        if (fileExists(marker))
-        {
-            joinPath(outPath, size, cur, "games.txt");
-            return false;
-        }
-
-        char* lastSep = strrchr(cur, '\\');
-        if (lastSep == nullptr)
-        {
-            break;
-        }
-        *lastSep = '\0';
-        if (cur[0] == '\0')
-        {
-            break;
-        }
-    }
-
+    // default path
     joinPath(outPath, size, cwd, "games.txt");
     return false;
 }
@@ -522,30 +501,6 @@ static bool resolveMembersPath(char* outPath, int size)
             strncpy_s(outPath, size, candidate, _TRUNCATE);
             outPath[size - 1] = '\0';
             return true;
-        }
-
-        char* lastSep = strrchr(cur, '\\');
-        if (lastSep == nullptr)
-        {
-            break;
-        }
-        *lastSep = '\0';
-        if (cur[0] == '\0')
-        {
-            break;
-        }
-    }
-
-    strncpy_s(cur, sizeof(cur), cwd, _TRUNCATE);
-    cur[sizeof(cur) - 1] = '\0';
-    for (int depth = 0; depth < 8; depth++)
-    {
-        char marker[260];
-        joinPath(marker, sizeof(marker), cur, "BoardGameManager.vcxproj");
-        if (fileExists(marker))
-        {
-            joinPath(outPath, size, cur, "members.txt");
-            return false;
         }
 
         char* lastSep = strrchr(cur, '\\');
@@ -1035,22 +990,34 @@ static void autoSaveMembers(MemberService& ms, GameService& gs, const char* path
     }
 }
 
-static void printGameShort(const Game* g, const GameService& gs)
+static void printGameShort(const Game* g, const GameService& gs, bool isAdmin)
 {
     if (g == nullptr)
     {
         return;
     }
 
-    std::cout << "ID: " << g->gameID << " | " << g->title
-        << " | Players: " << g->minPlayers << "-" << g->maxPlayers
-        << " | Year: " << g->yearPublished
-        << " | Copies: " << g->copiesAvailable << "/" << g->copiesTotal
-        << " | Avg Rating: " << gs.getAverageRating(g)
-        << " | Reviews: " << g->reviewCount << "\n";
+    if (isAdmin)
+    {
+        std::cout << "ID: " << g->gameID << " | " << g->title
+            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
+            << " | Year: " << g->yearPublished
+            << " | Copies: " << g->copiesAvailable << "/" << g->copiesTotal
+            << " | Avg Rating: " << gs.getAverageRating(g)
+            << " | Reviews: " << g->reviewCount << "\n";
+    }
+    else
+    {
+        std::cout << g->title
+            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
+            << " | Year: " << g->yearPublished
+            << " | Avg Rating: " << gs.getAverageRating(g)
+            << " | Reviews: " << g->reviewCount << "\n";
+    }
 }
 
-static int selectGameByName(GameService& gs)
+// Admin: select by ID (since ID is shown). Member: select by number (since ID is hidden).
+static int selectGameByName(GameService& gs, bool isAdmin)
 {
     char query[101];
     readLine("Enter part of the game name: ", query, sizeof(query));
@@ -1061,7 +1028,7 @@ static int selectGameByName(GameService& gs)
 
     Game** matches = nullptr;
     int count = gs.findGamesByTitleContains(query, matches);
-    if (count <= 0)
+    if (count <= 0 || matches == nullptr)
     {
         std::cout << "No matching games found.\n";
         return -1;
@@ -1070,15 +1037,40 @@ static int selectGameByName(GameService& gs)
     std::cout << "Matches:\n";
     for (int i = 0; i < count; i++)
     {
-        printGameShort(matches[i], gs);
+        if (isAdmin)
+        {
+            printGameShort(matches[i], gs, true);
+        }
+        else
+        {
+            std::cout << (i + 1) << ") ";
+            printGameShort(matches[i], gs, false);
+        }
     }
 
-    int id = readInt("Enter Game ID from the list: ");
+    int chosenId = -1;
+    if (isAdmin)
+    {
+        chosenId = readInt("Enter Game ID from the list: ");
+    }
+    else
+    {
+        int idx = readInt("Select a number from the list: ");
+        if (idx >= 1 && idx <= count)
+        {
+            chosenId = matches[idx - 1]->gameID;
+        }
+        else
+        {
+            chosenId = -1;
+        }
+    }
+
     delete[] matches;
-    return id;
+    return chosenId;
 }
 
-static void showGameDetails(GameService& gs)
+static void showGameDetails(GameService& gs, bool isAdmin)
 {
     int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
@@ -1089,7 +1081,7 @@ static void showGameDetails(GameService& gs)
     }
     else if (choice == 2)
     {
-        gameId = selectGameByName(gs);
+        gameId = selectGameByName(gs, isAdmin);
     }
 
     if (gameId <= 0)
@@ -1105,10 +1097,10 @@ static void showGameDetails(GameService& gs)
     }
 
     std::cout << "Game Details\n";
-    printGameShort(g, gs);
+    printGameShort(g, gs, isAdmin);
 }
 
-static void showGameReviews(GameService& gs, MemberService& ms)
+static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
 {
     int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
@@ -1119,7 +1111,7 @@ static void showGameReviews(GameService& gs, MemberService& ms)
     }
     else if (choice == 2)
     {
-        gameId = selectGameByName(gs);
+        gameId = selectGameByName(gs, isAdmin);
     }
 
     if (gameId <= 0)
@@ -1169,9 +1161,25 @@ static void showGameReviews(GameService& gs, MemberService& ms)
     delete[] list;
 }
 
-static bool writeGameReview(GameService& gs, int memberId)
+static bool writeGameReview(GameService& gs, bool isAdmin, int memberId)
 {
-    int gameId = readInt("Game ID to review: ");
+    int mode = readInt("Review by (1) Game ID or (2) name: ");
+    int gameId = -1;
+
+    if (mode == 1)
+    {
+        gameId = readInt("Game ID to review: ");
+    }
+    else if (mode == 2)
+    {
+        gameId = selectGameByName(gs, isAdmin);
+    }
+
+    if (gameId <= 0)
+    {
+        return false;
+    }
+
     int rating = readInt("Rating (1-10): ");
     char text[256];
     readLine("Review text (optional): ", text, sizeof(text));
@@ -1188,7 +1196,7 @@ static bool writeGameReview(GameService& gs, int memberId)
     }
 }
 
-static void listGamesByPlayers(GameService& gs)
+static void listGamesByPlayers(GameService& gs, bool isAdmin)
 {
     int players = readInt("Enter number of players: ");
     int sortChoice = readInt("Sort by (1) Year asc, (2) Avg rating desc, (0) None: ");
@@ -1207,12 +1215,12 @@ static void listGamesByPlayers(GameService& gs)
     std::cout << "Games for " << players << " players:\n";
     for (int i = 0; i < count; i++)
     {
-        printGameShort(list[i], gs);
+        printGameShort(list[i], gs, isAdmin);
     }
     delete[] list;
 }
 
-static bool recordGamePlay(GameService& gs, MemberService& ms)
+static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
 {
     int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
@@ -1223,7 +1231,7 @@ static bool recordGamePlay(GameService& gs, MemberService& ms)
     }
     else if (choice == 2)
     {
-        gameId = selectGameByName(gs);
+        gameId = selectGameByName(gs, isAdmin);
     }
 
     if (gameId <= 0)
@@ -1516,7 +1524,7 @@ static void showRecommendations(GameService& gs, int memberId)
     {
         int idx = candidates[i];
         double avg = scoreSum[idx] / (double)scoreCount[idx];
-        std::cout << "ID: " << all[idx]->gameID << " | " << all[idx]->title
+        std::cout << (i + 1) << ") " << all[idx]->title
             << " | Similar avg: " << avg << " (" << scoreCount[idx] << " ratings)\n";
     }
     std::cout.unsetf(std::ios::floatfield);
@@ -1530,7 +1538,7 @@ static void showRecommendations(GameService& gs, int memberId)
     delete[] all;
 }
 
-static void listAllGames(GameService& gs)
+static void listAllGames(GameService& gs, bool isAdmin)
 {
     Game** list = nullptr;
     int count = gs.getAllGames(list);
@@ -1542,7 +1550,7 @@ static void listAllGames(GameService& gs)
 
     for (int i = 0; i < count; i++)
     {
-        printGameShort(list[i], gs);
+        printGameShort(list[i], gs, isAdmin);
     }
     delete[] list;
 }
@@ -1555,9 +1563,10 @@ int main()
     AdminService admin(&gs);
 
     char gamesPath[260];
-    bool gamesFound = resolveGamesPath(gamesPath, sizeof(gamesPath));
+    (void)resolveGamesPath(gamesPath, sizeof(gamesPath));
+
     bool gamesLoaded = false;
-    if (gamesFound)
+    if (fileExists(gamesPath))
     {
         if (loadGamesFromText(gs, gamesPath))
         {
@@ -1580,25 +1589,22 @@ int main()
         {
             csvLoaded = true;
         }
+        else if (tryLoadCsvFromParents(gs))
+        {
+            csvLoaded = true;
+        }
         else
         {
-            if (tryLoadCsvFromParents(gs))
+            readLine("Enter CSV path (or leave blank to skip): ", csvPath, sizeof(csvPath));
+            if (csvPath[0] != '\0')
             {
-                csvLoaded = true;
-            }
-            else
-            {
-                readLine("Enter CSV path (or leave blank to skip): ", csvPath, sizeof(csvPath));
-                if (csvPath[0] != '\0')
+                if (tryLoadCsv(gs, csvPath))
                 {
-                    if (tryLoadCsv(gs, csvPath))
-                    {
-                        csvLoaded = true;
-                    }
-                    else
-                    {
-                        std::cout << "Failed to load CSV.\n";
-                    }
+                    csvLoaded = true;
+                }
+                else
+                {
+                    std::cout << "Failed to load CSV.\n";
                 }
             }
         }
@@ -1610,8 +1616,8 @@ int main()
     }
 
     char membersPath[260];
-    bool membersFound = resolveMembersPath(membersPath, sizeof(membersPath));
-    if (membersFound)
+    (void)resolveMembersPath(membersPath, sizeof(membersPath));
+    if (fileExists(membersPath))
     {
         if (loadMembers(ms, gs, membersPath))
         {
@@ -1716,19 +1722,19 @@ int main()
                 }
                 else if (a == 6)
                 {
-                    listAllGames(gs);
+                    listAllGames(gs, true);
                 }
                 else if (a == 7)
                 {
-                    showGameDetails(gs);
+                    showGameDetails(gs, true);
                 }
                 else if (a == 8)
                 {
-                    listGamesByPlayers(gs);
+                    listGamesByPlayers(gs, true);
                 }
                 else if (a == 9)
                 {
-                    showGameReviews(gs, ms);
+                    showGameReviews(gs, ms, true);
                 }
             }
         }
@@ -1773,7 +1779,7 @@ int main()
                     }
                     else if (mode == 2)
                     {
-                        gameId = selectGameByName(gs);
+                        gameId = selectGameByName(gs, false);
                     }
 
                     if (gameId <= 0)
@@ -1828,26 +1834,26 @@ int main()
                 }
                 else if (m == 5)
                 {
-                    if (writeGameReview(gs, memberId))
+                    if (writeGameReview(gs, false, memberId))
                     {
                         autoSaveMembers(ms, gs, membersPath);
                     }
                 }
                 else if (m == 6)
                 {
-                    showGameDetails(gs);
+                    showGameDetails(gs, false);
                 }
                 else if (m == 7)
                 {
-                    listGamesByPlayers(gs);
+                    listGamesByPlayers(gs, false);
                 }
                 else if (m == 8)
                 {
-                    showGameReviews(gs, ms);
+                    showGameReviews(gs, ms, false);
                 }
                 else if (m == 9)
                 {
-                    if (recordGamePlay(gs, ms))
+                    if (recordGamePlay(gs, ms, false))
                     {
                         autoSaveMembers(ms, gs, membersPath);
                     }

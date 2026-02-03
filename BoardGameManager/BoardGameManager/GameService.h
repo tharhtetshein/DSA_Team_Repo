@@ -39,7 +39,10 @@ public:
     Game* findByTitleExact(const char* title);
 
     bool addNewGame(const char* title, int minPlayers, int maxPlayers, int year, int copies);
+
+    // Needed for loading from games.txt (persisted IDs)
     bool addNewGameWithId(int gameId, const char* title, int minPlayers, int maxPlayers, int year, int copies);
+
     bool removeGame(int gameId);
 
     bool addCopies(int gameId, int copies);

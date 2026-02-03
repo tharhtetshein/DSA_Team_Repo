@@ -193,6 +193,7 @@ bool GameService::addNewGame(const char* title, int minPlayers, int maxPlayers, 
     return games.insertGame(g);
 }
 
+// ✅ kept from raybranch because main.cpp uses it to load from games.txt
 bool GameService::addNewGameWithId(int gameId, const char* title, int minPlayers, int maxPlayers, int year, int copies)
 {
     if (gameId <= 0 || title == nullptr || title[0] == '\0' || minPlayers <= 0 || maxPlayers < minPlayers || year <= 0 || copies <= 0)
