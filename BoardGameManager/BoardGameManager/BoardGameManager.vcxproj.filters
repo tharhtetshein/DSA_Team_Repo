@@ -48,6 +48,9 @@
     <ClCompile Include="AdminService.cpp">
       <Filter>services</Filter>
     </ClCompile>
+    <ClCompile Include="GameService.cpp">
+      <Filter>services</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Member.h">
@@ -75,6 +78,9 @@
       <Filter>ds</Filter>
     </ClInclude>
     <ClInclude Include="AdminService.h">
+      <Filter>services</Filter>
+    </ClInclude>
+    <ClInclude Include="GameService.h">
       <Filter>services</Filter>
     </ClInclude>
   </ItemGroup>

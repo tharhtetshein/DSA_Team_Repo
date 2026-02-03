@@ -1,0 +1,617 @@
+# BoardGameManager games v1
+GAME|1|12 Days|3|5|2011|1
+GAME|2|5-Minute Marvel|2|5|2018|1
+GAME|3|7 Wonders|2|7|2010|1
+GAME|4|7 Wonders Duel|2|2|2015|1
+GAME|5|7 Wonders: Architects|2|7|2021|1
+GAME|6|Aargh!|2|4|2005|1
+GAME|7|Abalone|2|2|1987|1
+GAME|8|Abandon All Artichokes|2|4|2020|1
+GAME|9|Abyss|2|4|2014|1
+GAME|10|Acquire|2|6|1963|1
+GAME|11|Adventure Land|2|4|2015|1
+GAME|12|The Adventurers: The Temple of Chac|2|6|2009|1
+GAME|13|Aeon's End: War Eternal|1|4|2017|1
+GAME|14|Africana|2|4|2012|1
+GAME|15|Airlines Europe|2|5|2011|1
+GAME|16|Akropolis|1|4|2022|1
+GAME|17|Akrotiri|2|2|2014|1
+GAME|18|Aladdin's Dragons|3|5|2000|1
+GAME|19|Alchemists|2|4|2014|1
+GAME|20|Alea Iacta Est|2|5|2009|1
+GAME|21|Alhambra|2|6|2003|1
+GAME|22|Alien Frontiers|2|4|2010|1
+GAME|23|Among the Stars|2|4|2012|1
+GAME|24|Das Amulett|3|6|2001|1
+GAME|25|Anima: Shadow of Omega|2|5|2006|1
+GAME|26|Animals on Board|2|4|2016|1
+GAME|27|Anomia|3|6|2010|1
+GAME|28|Apples to Apples|4|10|1999|1
+GAME|29|Arboretum|2|4|2015|1
+GAME|30|Arcane Academy|2|4|2016|1
+GAME|31|Archaeology: The Card Game|2|4|2007|1
+GAME|32|Archaeology: The New Expedition|2|5|2016|1
+GAME|33|Architects of the West Kingdom|1|5|2018|1
+GAME|34|Arena: Roma II|2|2|2009|1
+GAME|35|"Artifacts|0|2|60|1
+GAME|36|Asante|2|2|2013|1
+GAME|37|Ascension: Storm of Souls|1|4|2011|1
+GAME|38|At the Gates of Loyang|1|4|2009|1
+GAME|39|Atlantis Rising|2|6|2012|1
+GAME|40|Automania|2|4|2015|1
+GAME|41|Azul|2|4|2017|1
+GAME|42|Bacchus' Banquet|3|5|2008|1
+GAME|43|Back to the Future: Back in Time|2|4|2020|1
+GAME|44|Bad Company|1|6|2021|1
+GAME|45|Bag of Chips|2|5|2021|1
+GAME|46|Bandido|1|4|2016|1
+GAME|47|BANG!|4|7|2002|1
+GAME|48|BANG! The Dice Game|3|8|2013|2
+GAME|49|Barbarossa|3|4|1988|1
+GAME|50|Bargain Quest|2|6|2017|1
+GAME|51|BasketBoss|2|5|2009|1
+GAME|52|Battle Line|2|2|2000|1
+GAME|53|Battle Merchants|2|4|2014|1
+GAME|54|BattleCON: Fate of Indines|2|2|2015|1
+GAME|55|Beasty Bar|2|4|2014|1
+GAME|56|Beer!|2|6|2001|1
+GAME|57|Belratti|3|7|2018|1
+GAME|58|Betrayal at House on the Hill|3|6|2004|1
+GAME|59|Between Two Cities|1|7|2015|1
+GAME|60|Biblios|2|4|2007|1
+GAME|61|Black Friday|2|5|2010|1
+GAME|62|Blokus|2|4|2000|1
+GAME|63|Blood Bound|6|12|2013|1
+GAME|64|Blood Rage|2|4|2015|1
+GAME|65|Bloodborne: The Card Game|3|5|2016|1
+GAME|66|The Bloody Inn|1|4|2015|1
+GAME|67|Blueprints|2|4|2013|2
+GAME|68|Boggle|1|8|1972|1
+GAME|69|Bohnanza|2|7|1997|1
+GAME|70|Bomb Busters|2|5|2024|1
+GAME|71|Boss Monster: The Dungeon Building Card Game|2|4|2013|1
+GAME|72|Bosworth|2|4|1998|1
+GAME|73|Botswana|2|5|1994|1
+GAME|74|Brass: Birmingham|2|4|2018|1
+GAME|75|Bridge Troll|3|6|2009|1
+GAME|76|Broom Service|2|5|2015|1
+GAME|77|Bruges|2|4|2013|1
+GAME|78|Brynk|2|99|2016|1
+GAME|79|Buccaneer Bones|1|4|2013|1
+GAME|80|Bunny Kingdom|2|4|2017|1
+GAME|81|"But Wait|0|3|30|1
+GAME|82|Butterfly Garden|2|4|2012|1
+GAME|83|BuyWord|1|4|2004|1
+GAME|84|Ca$h 'n Gun$|4|6|2005|1
+GAME|85|Ca$h 'n Gun$: Live|8|20|2007|1
+GAME|86|Camel Up|2|8|2014|1
+GAME|87|Can't Stop|2|4|1980|1
+GAME|88|The Capitals|2|5|2013|1
+GAME|89|Captain Sonar|2|8|2016|1
+GAME|90|Carcassonne|2|5|2000|2
+GAME|91|The Card Game of Oz|1|4|2014|1
+GAME|92|Cartographers|1|100|2019|1
+GAME|93|Cascadia|1|4|2021|1
+GAME|94|Castell|2|4|2018|1
+GAME|95|Castle Combo|2|5|2024|1
+GAME|96|Castle Dice|1|4|2013|1
+GAME|97|Castle Panic|1|6|2009|1
+GAME|98|The Castles of Burgundy|2|4|2011|1
+GAME|99|Castles of Mad King Ludwig|1|4|2014|1
+GAME|100|Cat Packs|1|4|2024|1
+GAME|101|Caylus|2|5|2005|1
+GAME|102|Century: Golem Edition|2|5|2017|1
+GAME|103|Challengers!|1|8|2022|1
+GAME|104|The Chameleon|3|8|2017|1
+GAME|105|Chateau Roquefort|2|4|2007|1
+GAME|106|Chimera Station|2|4|2017|1
+GAME|107|Chinese Checkers|2|6|1893|1
+GAME|108|Chronicles of Crime: 1400|1|4|2020|1
+GAME|109|Chronicles of Crime: 1900|1|4|2021|1
+GAME|110|Cinque Terre|2|5|2013|1
+GAME|111|Citadels|2|8|2000|2
+GAME|112|Clank!: A Deck-Building Adventure|2|4|2016|1
+GAME|113|Clans of Caledonia|1|4|2017|1
+GAME|114|Clue: The Card Game|3|5|2002|1
+GAME|115|Cockroach Poker Royal|2|6|2012|1
+GAME|116|Codenames|2|8|2015|1
+GAME|117|Coimbra|2|4|2018|1
+GAME|118|Coin & Crown|1|4|2018|1
+GAME|119|Colony|1|4|2016|1
+GAME|120|Colt Express|2|6|2014|1
+GAME|121|Concept|4|12|2013|1
+GAME|122|Concordia|2|5|2013|1
+GAME|123|Connect Four|2|2|1974|1
+GAME|124|Copycat|2|4|2012|1
+GAME|125|Cottage Garden|1|4|2016|1
+GAME|126|Council of Verona (Second Edition)|2|5|2014|1
+GAME|127|Coup|2|6|2012|1
+GAME|128|Coup: Rebellion G54|3|6|2014|1
+GAME|129|Courtier|2|4|2012|1
+GAME|130|Cranium|4|99|1998|1
+GAME|131|Creature Caravan|1|4|2024|1
+GAME|132|Creature Comforts|1|5|2022|1
+GAME|133|Cretaceous Rails|1|4|2025|1
+GAME|134|The Crew: The Quest for Planet Nine|2|5|2019|1
+GAME|135|Crossfire|5|10|2017|1
+GAME|136|Crusaders: Thy Will Be Done|2|4|2018|1
+GAME|137|Cuckoo Zoo|2|10|2002|1
+GAME|138|Cutthroat Caverns|3|6|2007|1
+GAME|139|CV|2|4|2013|1
+GAME|140|Dairyman|2|4|2016|1
+GAME|141|Dead Cells: The Rogue-Lite Board Game|1|4|2024|1
+GAME|142|Dead of Winter: A Crossroads Game|2|5|2014|1
+GAME|143|Dead of Winter: The Long Night|2|5|2016|1
+GAME|144|Deadwood|2|5|2011|1
+GAME|145|Deception: Murder in Hong Kong|4|12|2014|1
+GAME|146|Decrypto|3|8|2018|1
+GAME|147|Defenders of the Realm|1|4|2010|1
+GAME|148|Demon Worker|3|4|2016|1
+GAME|149|Deus|2|4|2014|1
+GAME|150|Diabolo|3|5|2006|1
+GAME|151|Diamant|3|8|2005|1
+GAME|152|Dice Forge|2|4|2017|1
+GAME|153|Dice Manor|2|4|2023|1
+GAME|154|Dice Town|2|5|2009|1
+GAME|155|Discoveries: The Journals of Lewis & Clark|2|4|2015|1
+GAME|156|Discworld: Ankh-Morpork|2|4|2011|1
+GAME|157|Dive! Diver! Die!|3|5|2010|1
+GAME|158|Dixit|3|6|2008|1
+GAME|159|Dixit: Odyssey|3|12|2011|1
+GAME|160|Dog Lover|2|4|2021|1
+GAME|161|Dominion|2|4|2008|1
+GAME|162|Dominion: Intrigue|2|6|2009|1
+GAME|163|Don't Mess with Cthulhu Deluxe|4|8|2018|1
+GAME|164|DONUTS|2|2|2023|1
+GAME|165|Downforce|2|6|2017|1
+GAME|166|Dr. Eureka|2|4|2015|1
+GAME|167|Draftosaurus|2|5|2019|1
+GAME|168|Dragon's Gold|3|6|2001|1
+GAME|169|Dragonkeepers|2|4|2023|1
+GAME|170|Drakon|2|6|2001|1
+GAME|171|Dream Home|2|4|2016|1
+GAME|172|Drop It|2|4|2018|1
+GAME|173|Drum Roll|2|4|2011|1
+GAME|174|Dungeon Fighter|1|6|2011|1
+GAME|175|Dungeon Petz|2|4|2011|1
+GAME|176|Dungeons & Dragons: Rock Paper Wizard|3|6|2016|1
+GAME|177|Dutch Blitz|2|4|1960|1
+GAME|178|The Dutch Golden Age|3|4|2008|1
+GAME|179|Earth|1|5|2023|1
+GAME|180|Eclipse: New Dawn for the Galaxy|2|6|2011|1
+GAME|181|Ecos: First Continent|2|6|2019|1
+GAME|182|Elder Sign|1|8|2011|1
+GAME|183|Eldritch Horror|1|8|2013|1
+GAME|184|Elfenland|2|6|1998|1
+GAME|185|Elysium|2|4|2015|1
+GAME|186|Eminent Domain: Microcosm|2|2|2014|1
+GAME|187|Empire Builder|2|6|1982|1
+GAME|188|Empire's End|2|4|2023|1
+GAME|189|Endeavor: Age of Sail|2|5|2018|1
+GAME|190|Entropy|2|6|2015|1
+GAME|191|Eruption|2|6|2011|1
+GAME|192|Escape from the Aliens in Outer Space|2|8|2010|1
+GAME|193|Escape Room: The Game|3|5|2016|1
+GAME|194|Ethnos|2|6|2017|1
+GAME|195|Eurorails|2|6|1990|1
+GAME|196|Evolution|2|6|2014|1
+GAME|197|Evolution: Climate|2|6|2016|1
+GAME|198|Expedition Altiplano|2|2|2006|1
+GAME|199|Explorers of Navoria|2|4|2024|1
+GAME|200|Fallout Shelter: The Board Game|2|4|2020|1
+GAME|201|Family Business|2|6|1982|1
+GAME|202|Fantastic Factories|1|5|2019|1
+GAME|203|Fantasy Realms|2|6|2017|1
+GAME|204|Fidelitas|1|4|2015|1
+GAME|205|First Empires|2|5|2022|1
+GAME|206|First Rat|1|5|2022|1
+GAME|207|Fjords|1|2|2005|1
+GAME|208|Flamecraft|1|5|2022|1
+GAME|209|Flash Point: Fire Rescue|2|6|2011|1
+GAME|210|Fleet|2|4|2012|1
+GAME|211|Flip 7|3|18|2024|1
+GAME|212|For Sale|3|6|1997|1
+GAME|213|Forbidden Desert|2|5|2013|1
+GAME|214|Forbidden Island|2|4|2010|1
+GAME|215|Forest Shuffle|2|5|2023|1
+GAME|216|Formula De|2|10|1997|1
+GAME|217|Fortuna|2|4|2011|1
+GAME|218|Fortune and Glory: The Cliffhanger Game|1|8|2011|1
+GAME|219|The Fox Experiment|1|4|2023|1
+GAME|220|Fractured Sky|1|5|2024|1
+GAME|221|Friday|1|1|2011|1
+GAME|222|Fromage|1|4|2024|1
+GAME|223|Funfair|2|4|2021|1
+GAME|224|Fury of Dracula (Third/Fourth Edition)|2|5|2015|1
+GAME|225|FUSE|1|5|2015|1
+GAME|226|The Game|1|5|2015|1
+GAME|227|Game of Thrones: The Iron Throne|3|5|2016|1
+GAME|228|Gauner raus!|2|4|2016|1
+GAME|229|Geek Out!|2|99|2013|1
+GAME|230|Get Bit!|2|7|2007|1
+GAME|231|Get on Board: New York & London|2|5|2022|1
+GAME|232|Ghost Blitz|2|8|2010|1
+GAME|233|Ghost Stories|1|4|2008|1
+GAME|234|Ghosts Love Candy Too|2|6|2022|1
+GAME|235|Give Me the Brain!|3|8|1996|1
+GAME|236|Gizmos|2|4|2018|1
+GAME|237|Glass Road|1|4|2013|1
+GAME|238|Gloom|2|5|2005|1
+GAME|239|The Gnomes of Zavandor|2|4|2011|1
+GAME|240|Going Postal|3|6|2019|1
+GAME|241|"Going|0|0|20|1
+GAME|242|Good Cop Bad Cop|4|8|2014|1
+GAME|243|Grand Austria Hotel|2|4|2015|1
+GAME|244|The Grand Carnival|1|4|2020|1
+GAME|245|El Grande: Decennial Edition|2|5|2006|1
+GAME|246|The Great Split|2|7|2022|1
+GAME|247|The Grizzled|2|5|2015|1
+GAME|248|The Guild of Merchant Explorers|1|4|2022|1
+GAME|249|Guildhall|2|4|2012|1
+GAME|250|Guillotine|2|5|1998|1
+GAME|251|Habitats|1|5|2016|1
+GAME|252|Hail Hydra|5|8|2018|1
+GAME|253|Halli Galli|2|6|1990|1
+GAME|254|Halloween Party|3|6|2004|1
+GAME|255|Hanabi|2|5|2010|1
+GAME|256|Hanamikoji|2|2|2013|1
+GAME|257|Hansa Teutonica: Big Box|3|5|2020|1
+GAME|258|Happy Salmon|3|8|2016|1
+GAME|259|Harbour|1|4|2015|1
+GAME|260|Hardback|1|5|2018|1
+GAME|261|Le Havre|1|5|2008|1
+GAME|262|Heat: Pedal to the Metal|1|6|2022|1
+GAME|263|Herd Mentality|4|20|2020|1
+GAME|264|Here to Slay|2|6|2020|1
+GAME|265|"Hey|0|2|20|1
+GAME|266|High Society|3|5|1995|1
+GAME|267|Hoity Toity|2|5|1990|1
+GAME|268|Horrified|1|5|2019|1
+GAME|269|I'm the Boss!|3|6|1994|1
+GAME|270|ICECOOL|2|4|2016|1
+GAME|271|Ideology: The War of Ideas|2|5|2003|1
+GAME|272|Imaginiff|3|8|1998|1
+GAME|273|Imhotep|2|4|2016|1
+GAME|274|Imhotep: The Duel|2|2|2018|1
+GAME|275|Imperial Settlers|1|4|2014|1
+GAME|276|The Impregnable Fortress|2|2|2017|1
+GAME|277|Ingenious|1|4|2004|2
+GAME|278|Innovation|2|5|2010|1
+GAME|279|Intrigue|3|5|1994|1
+GAME|280|La Isla|2|4|2014|1
+GAME|281|Isle of Skye: From Chieftain to King|2|5|2015|1
+GAME|282|Islebound|2|4|2016|1
+GAME|283|Istanbul|2|5|2014|1
+GAME|284|Istanbul: The Dice Game|2|4|2017|1
+GAME|285|Jaipur|2|2|2009|1
+GAME|286|Jamaica|2|6|2007|1
+GAME|287|Jump Drive|2|4|2017|1
+GAME|288|Jungle Speed|2|10|1997|1
+GAME|289|Jurassic Jumble|3|9|2004|1
+GAME|290|Just One|3|7|2018|1
+GAME|291|Kanagawa|2|4|2016|1
+GAME|292|Karuba|2|4|2015|1
+GAME|293|Keyflower|2|6|2012|1
+GAME|294|Kill Doctor Lucky|3|8|1996|1
+GAME|295|King of Tokyo|2|6|2011|1
+GAME|296|The King's Guild|1|6|2018|1
+GAME|297|Kingdomino|2|4|2016|1
+GAME|298|Kitchen Rush|1|4|2017|1
+GAME|299|Kites|2|6|2022|1
+GAME|300|Knarr|2|4|2023|1
+GAME|301|Kodama: The Tree Spirits|2|5|2016|1
+GAME|302|Ladies & Gentlemen|4|10|2013|1
+GAME|303|Lady Alice|3|5|2012|1
+GAME|304|Lanterns: The Harvest Festival|2|4|2015|1
+GAME|305|Las Vegas|2|5|2012|1
+GAME|306|Last Will|2|5|2011|1
+GAME|307|Lawless Empire|3|5|2016|1
+GAME|308|Legacy: Gears of Time|2|4|2012|1
+GAME|309|Legacy: The Testament of Duke de Crecy|1|4|2013|1
+GAME|310|Legend of Vyas|2|2|2015|1
+GAME|311|Legendary: A Marvel Deck Building Game|1|5|2012|1
+GAME|312|Let's Kill!|2|6|1997|1
+GAME|313|Letters from Whitechapel|2|6|2011|1
+GAME|314|Level 7 [Omega Protocol]|2|6|2013|1
+GAME|315|Lewis & Clark: The Expedition|1|5|2013|1
+GAME|316|Libertalia|2|6|2012|1
+GAME|317|Lift it!|1|8|2012|1
+GAME|318|Light Speed: Arena|1|4|2025|1
+GAME|319|Link City|2|6|2024|1
+GAME|320|Livingstone|2|5|2009|1
+GAME|321|Lonpos 4D Puzzle Game|1|2|2000|1
+GAME|322|Loot|2|8|1992|1
+GAME|323|Lord of the Rings|2|5|2003|1
+GAME|324|The Lord of the Rings: The Card Game|1|2|2011|1
+GAME|325|Lords of Scotland|2|5|2010|1
+GAME|326|Lords of Xidit|3|5|2014|1
+GAME|327|Lost Cities|2|2|1999|1
+GAME|328|Lost Legends|3|5|2013|1
+GAME|329|Lost Ruins of Arnak|1|4|2020|1
+GAME|330|Love Letter|2|4|2012|1
+GAME|331|Magic Maze|1|8|2017|1
+GAME|332|Majesty: For the Realm|2|4|2017|1
+GAME|333|The Manhattan Project|2|5|2012|1
+GAME|334|The Manhattan Project: Energy Empire|1|5|2016|1
+GAME|335|Mansions of Madness|2|5|2011|1
+GAME|336|Mansions of Madness: Second Edition|1|5|2016|1
+GAME|337|Martian Dice|2|99|2011|1
+GAME|338|Mascarade|2|13|2013|1
+GAME|339|Master of Orion: The Board Game|2|4|2016|1
+GAME|340|Master of Respect|3|5|2016|1
+GAME|341|Mastermind|2|2|1971|1
+GAME|342|Mechs vs. Minions|2|4|2016|1
+GAME|343|Medieval Academy|2|5|2014|1
+GAME|344|Medieval Merchant|2|6|1998|1
+GAME|345|Medina (Second Edition)|2|4|2014|1
+GAME|346|Medium|2|8|2019|1
+GAME|347|Meeple War|2|4|2016|1
+GAME|348|Merkator|1|4|2010|1
+GAME|349|MicroMacro: Crime City|1|4|2020|1
+GAME|350|The Mines of Zavandor|2|4|2010|1
+GAME|351|Mission: Red Planet|3|5|2005|1
+GAME|352|Monopoly Deal Card Game|2|5|2008|1
+GAME|353|Monster Café|2|4|2013|1
+GAME|354|Morels|2|2|2012|1
+GAME|355|Mr. Jack|2|2|2006|1
+GAME|356|Munchkin Dungeon|2|5|2020|1
+GAME|357|Mysterium|2|7|2015|1
+GAME|358|Mysterium Park|2|6|2020|1
+GAME|359|Mystic Market|2|4|2019|1
+GAME|360|Mystic Vale|2|4|2016|1
+GAME|361|Nations|1|5|2013|1
+GAME|362|Nations: The Dice Game|1|4|2014|1
+GAME|363|Near and Far|2|4|2017|1
+GAME|364|New Haven|2|4|2013|1
+GAME|365|New York 1901|2|4|2015|1
+GAME|366|New York Slice|2|6|2017|1
+GAME|367|Nidavellir|2|5|2020|1
+GAME|368|The Night Cage|1|5|2021|1
+GAME|369|Night of the Ninja|4|11|2021|1
+GAME|370|Nimalia|2|4|2023|1
+GAME|371|No Thanks!|3|7|2004|2
+GAME|372|Nobody but Us Chickens|3|6|2003|1
+GAME|373|Not Alone|2|7|2016|1
+GAME|374|Notre Dame|2|5|2007|1
+GAME|375|Nuns on the Run|2|8|2010|1
+GAME|376|Oceanos|2|5|2016|1
+GAME|377|OddVille|2|4|2012|1
+GAME|378|Oh My Goods!|2|4|2015|1
+GAME|379|Old Maid|2|6|1874|1
+GAME|380|On Tour: Paris and New York|1|8|2022|1
+GAME|381|Once Upon a Time: The Storytelling Card Game|2|6|1993|1
+GAME|382|One Night Revolution|3|10|2015|1
+GAME|383|One Night Ultimate Werewolf|3|10|2014|1
+GAME|384|Onitama|2|2|2014|1
+GAME|385|Orleans|2|5|2014|1
+GAME|386|Outlive|2|4|2017|1
+GAME|387|Packet Row|2|5|2013|1
+GAME|388|Paleo|2|4|2020|1
+GAME|389|Pandemic|2|4|2008|2
+GAME|390|Pandemic: Rapid Response|2|4|2019|1
+GAME|391|Pandemic: The Cure|2|5|2014|1
+GAME|392|Parade|2|6|2007|1
+GAME|393|Party Panda Pirates|2|6|2024|1
+GAME|394|Pasha|2|5|2013|1
+GAME|395|Pass the Bomb|2|10|1994|1
+GAME|396|Patchwork|2|2|2014|1
+GAME|397|Pathfinder Adventure Card Game: Rise of the Runelords â€“ Base Set|1|4|2013|1
+GAME|398|Pay Dirt|2|5|2014|1
+GAME|399|Peloponnes|1|5|2009|1
+GAME|400|Perudo|2|10|1800|1
+GAME|401|Phantom Ink|2|8|2022|1
+GAME|402|Pick-a-Dog|1|5|2012|2
+GAME|403|The Pillars of the Earth|2|4|2006|1
+GAME|404|Pioneer Days|2|4|2017|1
+GAME|405|Pit|3|8|1903|1
+GAME|406|Planted: A Game of Nature & Nurture|2|5|2022|1
+GAME|407|Pluckin' Pairs|3|8|2012|1
+GAME|408|Plunder|2|6|2013|1
+GAME|409|Point Salad|2|6|2019|1
+GAME|410|Police Precinct|1|6|2013|1
+GAME|411|Poo: The Card Game|2|8|2009|1
+GAME|412|Port Royal|2|5|2014|1
+GAME|413|Power Grid|2|6|2004|1
+GAME|414|The Price Is Right|3|5|1973|1
+GAME|415|Progress: Evolution of Technology|1|5|2014|1
+GAME|416|Project L|1|4|2020|1
+GAME|417|Project: ELITE|1|4|2016|1
+GAME|418|Puerto Rico|3|5|2002|1
+GAME|419|Pulsar 2849|2|4|2017|1
+GAME|420|The Pursuit of Happiness|1|4|2015|1
+GAME|421|PUSH|2|6|2018|1
+GAME|422|QE|3|5|2019|1
+GAME|423|Quacks|2|4|2018|1
+GAME|424|Quadropolis|2|4|2016|1
+GAME|425|The Quest for El Dorado|2|4|2017|1
+GAME|426|Qwirkle|2|4|2006|1
+GAME|427|Raccoon Tycoon: Deluxe Edition|2|6|2021|1
+GAME|428|Race for the Galaxy|2|4|2007|1
+GAME|429|Race to Adventure: The Spirit of the Century Exploration Game|2|5|2013|1
+GAME|430|Raiders of the North Sea|2|4|2015|1
+GAME|431|Railroad Revolution|2|4|2016|1
+GAME|432|Rat-a-Tat Cat|2|6|1995|3
+GAME|433|RattleSnake|2|4|2007|1
+GAME|434|Ready Set Bet|2|9|2022|1
+GAME|435|The Reckoners|1|6|2018|1
+GAME|436|Red7|2|4|2014|1
+GAME|437|Reef|2|4|2018|1
+GAME|438|Relic Runners|2|5|2013|1
+GAME|439|Rent a Hero|3|5|2012|1
+GAME|440|Res Arcana|2|4|2019|1
+GAME|441|The Resistance|5|10|2009|2
+GAME|442|The Resistance: Avalon|5|10|2012|1
+GAME|443|Revolution!|3|4|2009|1
+GAME|444|Ricochet Robots|1|99|1999|1
+GAME|445|Riftforce|2|2|2021|1
+GAME|446|Rise|2|4|2022|1
+GAME|447|Rise of Augustus|2|6|2013|1
+GAME|448|Rising 5: Runes of Asteros|1|5|2017|1
+GAME|449|Risk|2|6|1959|1
+GAME|450|Risk 2210 A.D.|2|5|2001|1
+GAME|451|Risk: Star Wars Edition|2|4|2015|1
+GAME|452|River of Gold|2|4|2024|1
+GAME|453|River Valley Glassworks|1|5|2024|1
+GAME|454|Robinson Crusoe: Adventures on the Cursed Island|1|4|2012|1
+GAME|455|RoboRally|2|8|1994|1
+GAME|456|Rococo|2|5|2013|1
+GAME|457|Roll for the Galaxy|2|5|2014|1
+GAME|458|Roll Player|1|4|2016|1
+GAME|459|Roll Through the Ages: The Bronze Age|1|4|2008|1
+GAME|460|Room 25|1|6|2013|1
+GAME|461|Royals|2|5|2014|1
+GAME|462|Rummikub|2|4|1977|1
+GAME|463|"Run|0|0|40|1
+GAME|464|Russian Railroads|2|4|2013|1
+GAME|465|Saboteur|3|10|2004|2
+GAME|466|Sail to India|3|4|2013|1
+GAME|467|Saint Malo|2|5|2012|1
+GAME|468|Saint Petersburg|2|4|2004|1
+GAME|469|Samurai|2|4|1998|1
+GAME|470|San Juan|2|4|2004|1
+GAME|471|Sanssouci|2|4|2013|1
+GAME|472|Santa Maria|1|4|2017|1
+GAME|473|Santo Domingo|2|6|2017|1
+GAME|474|Santorini|2|4|2016|1
+GAME|475|Say Anything|3|8|2008|1
+GAME|476|Say Anything Family Edition|3|6|2011|1
+GAME|477|Scotland Yard: Hunting Mister X|2|4|2019|1
+GAME|478|Scythe|1|5|2016|1
+GAME|479|Sea Salt & Paper|2|4|2022|1
+GAME|480|Seasons|2|4|2012|1
+GAME|481|Secret Hitler|5|10|2016|1
+GAME|482|Sentinels of the Multiverse|2|5|2011|1
+GAME|483|Sequence|2|12|1982|1
+GAME|484|The Settlers of Catan|3|6|2008|1
+GAME|485|Seven Dragons|2|5|2011|1
+GAME|486|Shadow Hunters|4|8|2005|1
+GAME|487|Shadowrift|1|6|2012|1
+GAME|488|Shadowrun: Crossfire|1|4|2014|1
+GAME|489|Shadows over Camelot|3|7|2005|1
+GAME|490|Sherlock Holmes Consulting Detective: The Thames Murders & Other Cases|1|8|1981|1
+GAME|491|The Shipwreck Arcana|2|5|2017|1
+GAME|492|Shogun|3|5|2006|1
+GAME|493|Signorie|2|4|2015|1
+GAME|494|Similo|2|8|2019|1
+GAME|495|Skull|3|6|2011|1
+GAME|496|Sleeping Queens|2|5|2005|1
+GAME|497|Small World|2|5|2009|1
+GAME|498|Small World Underground|2|5|2011|1
+GAME|499|Smash Up|2|4|2012|1
+GAME|500|Snake Oil: Elixir|3|8|2015|1
+GAME|501|Sneaks & Snitches|2|5|2010|1
+GAME|502|Snorta!|3|8|2004|1
+GAME|503|So Clover!|3|6|2021|1
+GAME|504|Sonora|1|4|2020|1
+GAME|505|Space Base|2|5|2018|1
+GAME|506|Specter Ops|2|5|2015|1
+GAME|507|Spirit Island|1|4|2017|1
+GAME|508|Spit It Out!|3|8|2015|1
+GAME|509|Splendor|2|4|2014|1
+GAME|510|Splendor Duel|2|2|2022|1
+GAME|511|Spots|1|4|2022|1
+GAME|512|Squint|3|8|2002|1
+GAME|513|Star Realms|2|2|2014|1
+GAME|514|Star Wars: Outer Rim|1|4|2019|1
+GAME|515|Steam Time|2|4|2015|1
+GAME|516|Steampunk Rally|2|8|2015|1
+GAME|517|Stockpile|2|5|2015|1
+GAME|518|Stone Age|2|4|2008|1
+GAME|519|Strike|2|5|2012|1
+GAME|520|Suburbia|1|4|2012|1
+GAME|521|Survive: Escape from Atlantis!|2|4|1982|1
+GAME|522|Sushi Go!|2|5|2013|1
+GAME|523|Sushi Roll|2|5|2019|1
+GAME|524|Sushi Roll!|3|8|2009|1
+GAME|525|T.I.M.E Stories|2|4|2015|1
+GAME|526|Taboo|4|10|1989|1
+GAME|527|Tac Tac Jack|2|7|2008|1
+GAME|528|Take 5|2|10|1994|1
+GAME|529|Takenoko|2|4|2011|1
+GAME|530|Tales & Games: The Hare & the Tortoise|2|5|2011|1
+GAME|531|Tapple|2|10|2012|1
+GAME|532|Targi|2|2|2012|1
+GAME|533|Telestrations|4|8|2009|1
+GAME|534|Tenpenny Parks|1|4|2022|1
+GAME|535|Teotihuacan: City of Gods|1|4|2018|1
+GAME|536|Terror Below|1|5|2019|1
+GAME|537|Terror in Meeple City|2|4|2013|1
+GAME|538|Terrorscape|2|4|2023|1
+GAME|539|This Game Is Killer: Alien on Board|3|10|2024|1
+GAME|540|Those Pesky Humans!|2|4|2009|1
+GAME|541|Three Kingdoms Redux|3|3|2014|1
+GAME|542|Thunderstone Advance: Towers of Ruin|1|5|2012|1
+GAME|543|Thurn and Taxis|2|4|2006|1
+GAME|544|Ticket to Ride|2|5|2004|1
+GAME|545|Ticket to Ride: Europe|2|5|2005|1
+GAME|546|Tides of Time|2|2|2015|1
+GAME|547|Tiefe Taschen|4|8|2016|1
+GAME|548|Tigris & Euphrates|2|4|1997|1
+GAME|549|Tiki Topple|2|4|2008|1
+GAME|550|Time's Up!|4|18|1999|1
+GAME|551|Time's Up! Title Recall!|4|18|2008|1
+GAME|552|Timeline: Events|2|8|2011|1
+GAME|553|Timeline: Inventions|2|8|2010|1
+GAME|554|Timeline: Music & Cinema|2|8|2013|1
+GAME|555|Timeline: Science & Discoveries|2|8|2011|1
+GAME|556|Tiny Epic Defenders|1|4|2015|1
+GAME|557|Tiny Epic Galaxies|1|5|2015|1
+GAME|558|Tobago|2|4|2009|1
+GAME|559|Tofu Kingdom|3|8|2015|1
+GAME|560|Tokaido|1|5|2012|1
+GAME|561|Torres|2|4|1999|1
+GAME|562|Tournay|2|4|2011|1
+GAME|563|Trekking Through History|1|4|2022|1
+GAME|564|Tribes: Dawn of Humanity|2|4|2018|1
+GAME|565|Trio|3|6|2021|1
+GAME|566|Truffle Shuffle|2|4|2020|1
+GAME|567|Tumult Royale|2|4|2015|1
+GAME|568|Tutankhamun|2|6|2021|1
+GAME|569|Twister|2|4|1966|1
+GAME|570|Uglydoll Card Game|2|6|2006|1
+GAME|571|Ultimate Werewolf: Deluxe Edition|5|75|2014|1
+GAME|572|Undermining|2|5|2011|1
+GAME|573|Unlock!: Exotic Adventures|1|6|2018|1
+GAME|574|Unlock!: Extraordinary Adventures|1|6|2022|1
+GAME|575|Unlock!: Game Adventures|1|6|2021|1
+GAME|576|Unlock!: Heroic Adventures|1|6|2018|1
+GAME|577|Unlock!: Legendary Adventures|1|6|2021|1
+GAME|578|Unlock!: Secret Adventures|1|6|2017|1
+GAME|579|UNO Stacko|2|10|1994|1
+GAME|580|Unusual Suspects|3|16|2015|1
+GAME|581|The Vale of Eternity|2|4|2023|1
+GAME|582|Vault Wars|3|5|2015|1
+GAME|583|Il Vecchio|2|4|2012|1
+GAME|584|Via Nebula|2|4|2016|1
+GAME|585|Viceroy|1|4|2014|1
+GAME|586|Village Pillage|2|5|2019|1
+GAME|587|Vindication|2|5|2018|1
+GAME|588|Viticulture|2|6|2013|1
+GAME|589|VivaJava: The Coffee Game: The Dice Game|1|4|2014|1
+GAME|590|The Voyages of Marco Polo|2|4|2015|1
+GAME|591|Warsaw: City of Ruins|2|4|2016|1
+GAME|592|Wasteland Express Delivery Service|2|5|2017|1
+GAME|593|Welcome to the Dungeon|2|4|2013|1
+GAME|594|Werewords|4|10|2017|1
+GAME|595|Wheel of Fortune|2|4|1975|1
+GAME|596|Whitehall Mystery|2|4|2017|1
+GAME|597|Wild Space|1|5|2020|1
+GAME|598|Wingspan|1|5|2019|1
+GAME|599|WINK|3|8|1994|1
+GAME|600|Wits & Wagers|3|7|2005|1
+GAME|601|Wok and Roll|1|5|2020|1
+GAME|602|Word Slam|3|99|2016|2
+GAME|603|World of Yo-Ho|2|4|2016|1
+GAME|604|World Wonders|1|5|2023|1
+GAME|605|World's Fair 1893|2|4|2016|1
+GAME|606|Wreck Raiders|1|5|2019|1
+GAME|607|Wreckage|2|4|2003|1
+GAME|608|XenoShyft: Onslaught|1|4|2015|1
+GAME|609|Yamatai|2|4|2017|1
+GAME|610|Yardmaster|2|5|2014|1
+GAME|611|Yedo|2|5|2012|1
+GAME|612|You Robot|4|10|2009|1
+GAME|613|Zendo|2|6|2001|1
+GAME|614|Zeus on the Loose|2|5|2006|1
+GAME|615|Zombie Fluxx|2|6|2007|1
+GAME|616|Zooloretto|2|5|2007|1

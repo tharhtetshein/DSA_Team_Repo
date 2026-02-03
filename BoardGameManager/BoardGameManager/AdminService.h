@@ -1,20 +1,18 @@
 #ifndef ADMIN_SERVICE_H
 #define ADMIN_SERVICE_H
 
-#include "HashTable.h"
+#include "GameService.h"
 
 class AdminService
 {
 private:
-    HashTable* gameTable;
+    GameService* gameService;
 
 public:
-    AdminService(HashTable* table);
+    AdminService(GameService* service);
 
-    bool addGame(const Game& game);
+    bool addGame(const char* title, int minPlayers, int maxPlayers, int year, int copies);
     bool removeGame(int gameID);
-
-    void showBorrowSummary();
 };
 
 #endif
