@@ -275,11 +275,11 @@ static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
         Member* m = ms.getMemberById(r->memberId);
         if (m != nullptr)
         {
-            std::cout << "Member: " << m->name << " (ID " << r->memberId << ")";
+            std::cout << "Member: " << m->name;
         }
         else
         {
-            std::cout << "Member ID " << r->memberId;
+            std::cout << "Member: Unknown";
         }
         std::cout << " | Rating: " << r->rating << "\n";
         if (r->text[0] != '\0')
