@@ -1,0 +1,7 @@
+# BoardGameManager members v3
+MEMBER|2|Thar Htet Shein|2|1
+BORROWED|2|1|12 Days
+REVIEW|2|1|12 Days|10|This game is absolutely gorgeous.
+REVIEW|2|400|Perudo|10|
+PLAY|16|Akropolis|2|
+PLAY|2|5-Minute Marvel|2|2

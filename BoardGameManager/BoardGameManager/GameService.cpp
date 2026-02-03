@@ -193,6 +193,65 @@ bool GameService::addNewGame(const char* title, int minPlayers, int maxPlayers, 
     return games.insertGame(g);
 }
 
+// ✅ kept from raybranch because main.cpp uses it to load from games.txt
+bool GameService::addNewGameWithId(int gameId, const char* title, int minPlayers, int maxPlayers, int year, int copies)
+{
+    if (gameId <= 0 || title == nullptr || title[0] == '\0' || minPlayers <= 0 || maxPlayers < minPlayers || year <= 0 || copies <= 0)
+    {
+        return false;
+    }
+
+    Game* byId = games.findGame(gameId);
+    if (byId != nullptr)
+    {
+        Game* byTitle = games.findGameByTitle(title);
+        if (byTitle != nullptr && byTitle != byId)
+        {
+            return false;
+        }
+        byId->copiesTotal += copies;
+        byId->copiesAvailable += copies;
+        updateStatus(byId);
+        return true;
+    }
+
+    Game* existing = games.findGameByTitle(title);
+    if (existing != nullptr)
+    {
+        existing->copiesTotal += copies;
+        existing->copiesAvailable += copies;
+        updateStatus(existing);
+        return true;
+    }
+
+    Game g;
+    g.gameID = gameId;
+    strncpy_s(g.title, sizeof(g.title), title, _TRUNCATE);
+    g.title[sizeof(g.title) - 1] = '\0';
+    g.minPlayers = minPlayers;
+    g.maxPlayers = maxPlayers;
+    g.yearPublished = year;
+    g.copiesTotal = copies;
+    g.copiesAvailable = copies;
+    g.ratingSum = 0;
+    g.ratingCount = 0;
+    g.reviewsHead = nullptr;
+    g.reviewCount = 0;
+    g.status = GameStatus::AVAILABLE;
+
+    if (!games.insertGame(g))
+    {
+        return false;
+    }
+
+    if (gameId >= nextGameId)
+    {
+        nextGameId = gameId + 1;
+    }
+
+    return true;
+}
+
 bool GameService::removeGame(int gameId)
 {
     Game* game = games.findGame(gameId);
