@@ -39,13 +39,13 @@ static bool removeBorrowedGame(Member* member, int gameId) {
     return false;
 }
 
-TransactionService::TransactionService(MemberService* ms, int eventCapacity)
-    : memberService(ms), eventLog(eventCapacity) {
+TransactionService::TransactionService(MemberService* ms, GameService* gs, int eventCapacity)
+    : memberService(ms), gameService(gs), eventLog(eventCapacity) {
 }
 
 Status TransactionService::borrowGame(int memberId, int gameId) {
     // Phase 0: Validate inputs and member existence; real game checks in Phase 1
-    if (memberService == nullptr || memberId <= 0 || gameId <= 0) {
+    if (memberService == nullptr || gameService == nullptr || memberId <= 0 || gameId <= 0) {
         return INVALID_INPUT;
     }
 
@@ -59,13 +59,19 @@ Status TransactionService::borrowGame(int memberId, int gameId) {
         return ALREADY_EXISTS;
     }
 
-    // TODO (Phase 1): Integrate with Member A's GameService:
-    // - Game* g = getGameById(gameId)
-    // - if g == nullptr -> NOT_FOUND
-    // - if g->availableCopies <= 0 -> NOT_AVAILABLE
-    // - g->availableCopies--
+    Game* g = gameService->findById(gameId);
+    if (g == nullptr) {
+        return NOT_FOUND;
+    }
+    if (g->copiesAvailable <= 0) {
+        return NOT_AVAILABLE;
+    }
 
-    // For Phase 0, we simulate success by adding to borrowed list and logging event.
+    g->copiesAvailable -= 1;
+    if (g->copiesAvailable <= 0) {
+        g->status = GameStatus::BORROWED;
+    }
+
     addBorrowedGame(m, gameId);
 
     BorrowEvent e;
@@ -79,7 +85,7 @@ Status TransactionService::borrowGame(int memberId, int gameId) {
 }
 
 Status TransactionService::returnGame(int memberId, int gameId) {
-    if (memberService == nullptr || memberId <= 0 || gameId <= 0) {
+    if (memberService == nullptr || gameService == nullptr || memberId <= 0 || gameId <= 0) {
         return INVALID_INPUT;
     }
 
@@ -93,12 +99,14 @@ Status TransactionService::returnGame(int memberId, int gameId) {
         return NOT_BORROWED;
     }
 
-    // TODO (Phase 1): Integrate with Member A's GameService:
-    // - Game* g = getGameById(gameId)
-    // - if g == nullptr -> NOT_FOUND
-    // - g->availableCopies++
+    Game* g = gameService->findById(gameId);
+    if (g == nullptr) {
+        return NOT_FOUND;
+    }
 
-    // Phase 0: remove from borrowed list and log event.
+    g->copiesAvailable += 1;
+    g->status = GameStatus::AVAILABLE;
+
     (void)removeBorrowedGame(m, gameId);
 
     BorrowEvent e;
@@ -124,7 +132,7 @@ void TransactionService::adminBorrowReturnSummary() {
         }
     }
 
-    std::cout << "[Admin Summary - Phase 0]\n";
+    std::cout << "[Admin Summary]\n";
     std::cout << "Total BORROW events: " << borrowCount << "\n";
     std::cout << "Total RETURN events: " << returnCount << "\n";
     std::cout << "Total events logged: " << eventLog.getCount() << "\n";
@@ -145,9 +153,43 @@ void TransactionService::memberBorrowReturnSummary(int memberId) {
         }
     }
 
-    std::cout << "[Member Summary - Phase 0] MemberId: " << memberId << "\n";
+    std::cout << "[Member Summary] MemberId: " << memberId << "\n";
     std::cout << "BORROW events: " << borrowCount << "\n";
     std::cout << "RETURN events: " << returnCount << "\n";
+}
+
+void TransactionService::adminBorrowReturnSummaryByGame() {
+    if (gameService == nullptr) {
+        return;
+    }
+
+    Game** all = nullptr;
+    int total = gameService->getAllGames(all);
+    if (total <= 0 || all == nullptr) {
+        std::cout << "No games loaded.\n";
+        return;
+    }
+
+    std::cout << "[Admin Summary - By Game]\n";
+    for (int i = 0; i < total; i++) {
+        int borrowCount = 0;
+        int returnCount = 0;
+
+        for (int j = 0; j < eventLog.getCount(); j++) {
+            BorrowEvent e;
+            if (eventLog.getAt(j, e)) {
+                if (e.gameId == all[i]->gameID) {
+                    if (e.action == ACTION_BORROW) borrowCount++;
+                    else if (e.action == ACTION_RETURN) returnCount++;
+                }
+            }
+        }
+
+        std::cout << "GameID " << all[i]->gameID << " - " << all[i]->title
+            << " | Borrow: " << borrowCount << " Return: " << returnCount << "\n";
+    }
+
+    delete[] all;
 }
 
 CircularQueue& TransactionService::getEventLog() {

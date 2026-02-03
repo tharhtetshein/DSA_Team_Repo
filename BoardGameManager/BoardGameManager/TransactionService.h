@@ -3,6 +3,7 @@
 
 #include "MemberService.h"
 #include "CircularQueue.h"
+#include "GameService.h"
 
 // Member B - Phase 0
 // Transaction service owns borrow/return rules and event logging.
@@ -11,10 +12,11 @@
 class TransactionService {
 private:
     MemberService* memberService;  // not owned
+    GameService* gameService;      // not owned
     CircularQueue eventLog;        // owned
 
 public:
-    TransactionService(MemberService* ms, int eventCapacity = 200);
+    TransactionService(MemberService* ms, GameService* gs, int eventCapacity = 200);
 
     // Borrow / Return
     Status borrowGame(int memberId, int gameId);
@@ -23,6 +25,7 @@ public:
     // Summaries
     void adminBorrowReturnSummary();
     void memberBorrowReturnSummary(int memberId);
+    void adminBorrowReturnSummaryByGame();
 
     // Access for testing/demo tools
     CircularQueue& getEventLog();
