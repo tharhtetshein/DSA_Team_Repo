@@ -325,7 +325,17 @@ static void writeGameReview(GameService& gs, int memberId)
     int gameId = selected->gameID;
     delete[] matches;
 
-    int rating = readInt("Rating (1-10): ");
+    int rating;
+    while (true)
+    {
+        rating = readInt("Rating (1-10): ");
+        if (rating >= 1 && rating <= 10)
+        {
+            break;
+        }
+        std::cout << "Invalid rating. Please enter a number between 1 and 10.\n";
+    }
+
     char text[256];
     readLine("Review text (optional): ", text, sizeof(text));
 
