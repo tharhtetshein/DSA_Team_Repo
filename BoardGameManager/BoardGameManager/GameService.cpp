@@ -289,7 +289,42 @@ bool GameService::addCopies(int gameId, int copies)
 
 bool GameService::rateGame(int memberId, int gameId, int rating)
 {
-    return addReview(memberId, gameId, rating, "");
+    if (memberId <= 0 || rating < 1 || rating > 10)
+    {
+        return false;
+    }
+
+    Game* game = games.findGame(gameId);
+    if (game == nullptr)
+    {
+        return false;
+    }
+
+    ReviewNode* cur = game->reviewsHead;
+    while (cur != nullptr)
+    {
+        if (cur->memberId == memberId)
+        {
+            if (cur->rating != rating)
+            {
+                game->ratingSum -= cur->rating;
+                cur->rating = rating;
+                game->ratingSum += rating;
+            }
+            return true;
+        }
+        cur = cur->next;
+    }
+
+    ReviewNode* node = new ReviewNode();
+    node->memberId = memberId;
+    node->rating = rating;
+    node->next = game->reviewsHead;
+    game->reviewsHead = node;
+    game->reviewCount += 1;
+    game->ratingSum += rating;
+    game->ratingCount += 1;
+    return true;
 }
 
 bool GameService::addReview(int memberId, int gameId, int rating, const char* text)

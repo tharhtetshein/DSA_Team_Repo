@@ -7,6 +7,7 @@
 #include <cctype>
 #include <iomanip>
 #include <cstdio>
+#include <ctime>
 
 #include "MemberService.h"
 #include "TransactionService.h"
@@ -19,6 +20,7 @@ struct PlayRecord
     char gameTitle[101];
     char participants[256];
     char winners[256];
+    char playedAt[20];
     PlayRecord* next;
 
     PlayRecord()
@@ -27,6 +29,7 @@ struct PlayRecord
         gameTitle[0] = '\0';
         participants[0] = '\0';
         winners[0] = '\0';
+        playedAt[0] = '\0';
     }
 };
 
@@ -254,6 +257,50 @@ static bool containsId(const int* ids, int count, int value)
     return false;
 }
 
+static void printIdList(const int* ids, int count)
+{
+    if (ids == nullptr || count <= 0)
+    {
+        std::cout << "None";
+        return;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        if (i > 0)
+        {
+            std::cout << ", ";
+        }
+        std::cout << ids[i];
+    }
+}
+
+static void printMemberListWithNames(const int* ids, int count, MemberService& ms)
+{
+    if (ids == nullptr || count <= 0)
+    {
+        std::cout << "None";
+        return;
+    }
+
+    for (int i = 0; i < count; i++)
+    {
+        if (i > 0)
+        {
+            std::cout << ", ";
+        }
+        Member* m = ms.getMemberById(ids[i]);
+        if (m != nullptr && m->name[0] != '\0')
+        {
+            std::cout << ids[i] << " - " << m->name;
+        }
+        else
+        {
+            std::cout << ids[i];
+        }
+    }
+}
+
 static int parseIdList(const char* list, int* outIds, int maxIds)
 {
     if (list == nullptr || outIds == nullptr || maxIds <= 0)
@@ -326,13 +373,35 @@ static void resetMemberTotals(MemberService& ms)
     }
 }
 
-static void addPlayRecord(int gameId, const char* title, const char* participants, const char* winners)
+static void getCurrentTimestamp(char* out, int size)
+{
+    if (out == nullptr || size <= 0)
+    {
+        return;
+    }
+
+    std::time_t now = std::time(nullptr);
+    std::tm localTime;
+    if (localtime_s(&localTime, &now) != 0)
+    {
+        out[0] = '\0';
+        return;
+    }
+
+    if (std::strftime(out, size, "%Y-%m-%d %H:%M", &localTime) == 0)
+    {
+        out[0] = '\0';
+    }
+}
+
+static void addPlayRecord(int gameId, const char* title, const char* participants, const char* winners, const char* playedAt)
 {
     PlayRecord* node = new PlayRecord();
     node->gameId = gameId;
     sanitizeForSave(title, node->gameTitle, sizeof(node->gameTitle));
     sanitizeForSave(participants, node->participants, sizeof(node->participants));
     sanitizeForSave(winners, node->winners, sizeof(node->winners));
+    sanitizeForSave(playedAt, node->playedAt, sizeof(node->playedAt));
 
     if (g_playTail == nullptr)
     {
@@ -606,6 +675,86 @@ static void sortGamesById(Game** list, int count)
     }
 }
 
+static int compareTitlesIgnoreCase(const char* a, const char* b)
+{
+    if (a == nullptr && b == nullptr)
+    {
+        return 0;
+    }
+    if (a == nullptr)
+    {
+        return -1;
+    }
+    if (b == nullptr)
+    {
+        return 1;
+    }
+
+    int i = 0;
+    while (a[i] != '\0' && b[i] != '\0')
+    {
+        char ca = (char)std::tolower((unsigned char)a[i]);
+        char cb = (char)std::tolower((unsigned char)b[i]);
+        if (ca != cb)
+        {
+            return (ca < cb) ? -1 : 1;
+        }
+        i++;
+    }
+
+    if (a[i] == '\0' && b[i] == '\0')
+    {
+        return 0;
+    }
+    return (a[i] == '\0') ? -1 : 1;
+}
+
+static void sortGamesByTitle(Game** list, int count)
+{
+    if (list == nullptr || count <= 1)
+    {
+        return;
+    }
+
+    for (int i = 0; i < count - 1; i++)
+    {
+        int best = i;
+        for (int j = i + 1; j < count; j++)
+        {
+            int cmp = compareTitlesIgnoreCase(list[j]->title, list[best]->title);
+            bool swapNeeded = false;
+            if (cmp < 0)
+            {
+                swapNeeded = true;
+            }
+            else if (cmp == 0)
+            {
+                int caseCmp = strcmp(list[j]->title, list[best]->title);
+                if (caseCmp < 0)
+                {
+                    swapNeeded = true;
+                }
+                else if (caseCmp == 0 && list[j]->gameID < list[best]->gameID)
+                {
+                    swapNeeded = true;
+                }
+            }
+
+            if (swapNeeded)
+            {
+                best = j;
+            }
+        }
+
+        if (best != i)
+        {
+            Game* tmp = list[i];
+            list[i] = list[best];
+            list[best] = tmp;
+        }
+    }
+}
+
 static bool saveGames(GameService& gs, const char* path)
 {
     if (path == nullptr || path[0] == '\0')
@@ -858,6 +1007,7 @@ static bool loadMembers(MemberService& ms, GameService& gs, const char* path)
             char* titleStr = strtok_s(nullptr, "|", &context);
             char* participantsStr = strtok_s(nullptr, "|", &context);
             char* winnersStr = strtok_s(nullptr, "|", &context);
+            char* playedAtStr = strtok_s(nullptr, "|", &context);
 
             if (gameStr == nullptr || participantsStr == nullptr)
             {
@@ -891,7 +1041,8 @@ static bool loadMembers(MemberService& ms, GameService& gs, const char* path)
             }
 
             const char* winners = (winnersStr != nullptr) ? winnersStr : "";
-            addPlayRecord(gameId, g->title, participantsStr, winners);
+            const char* playedAt = (playedAtStr != nullptr) ? playedAtStr : "";
+            addPlayRecord(gameId, g->title, participantsStr, winners, playedAt);
             applyPlayStats(ms, participantsStr, winners);
         }
     }
@@ -970,7 +1121,8 @@ static bool saveMembers(MemberService& ms, GameService& gs, const char* path)
     while (pr != nullptr)
     {
         out << "PLAY|" << pr->gameId << "|" << pr->gameTitle << "|"
-            << pr->participants << "|" << pr->winners << "\n";
+            << pr->participants << "|" << pr->winners << "|"
+            << pr->playedAt << "\n";
         pr = pr->next;
     }
 
@@ -1224,10 +1376,12 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
 {
     int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
+    bool needsConfirm = false;
 
     if (choice == 1)
     {
         gameId = readInt("Enter Game ID: ");
+        needsConfirm = true;
     }
     else if (choice == 2)
     {
@@ -1245,58 +1399,178 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
         std::cout << "Game not found.\n";
         return false;
     }
-
-    char participantsInput[256];
-    readLine("Enter participant member IDs (comma-separated): ", participantsInput, sizeof(participantsInput));
+    if (needsConfirm)
+    {
+        std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
+        int confirm = readInt("Record play for this game? (1) Yes (0) No: ");
+        if (confirm != 1)
+        {
+            std::cout << "Cancelled.\n";
+            return false;
+        }
+    }
 
     int tempIds[64];
-    int tempCount = parseIdList(participantsInput, tempIds, 64);
 
     int participants[64];
     int participantCount = 0;
-    int invalidParticipants = 0;
-    for (int i = 0; i < tempCount; i++)
+    while (true)
     {
-        if (ms.getMemberById(tempIds[i]) != nullptr)
+        char participantsInput[256];
+        readLine("Enter participant member IDs (comma-separated): ", participantsInput, sizeof(participantsInput));
+        int tempCount = parseIdList(participantsInput, tempIds, 64);
+
+        participantCount = 0;
+        int invalidIds[64];
+        int invalidCount = 0;
+        for (int i = 0; i < tempCount; i++)
         {
-            if (!containsId(participants, participantCount, tempIds[i]))
+            if (ms.getMemberById(tempIds[i]) != nullptr)
             {
-                participants[participantCount++] = tempIds[i];
+                if (!containsId(participants, participantCount, tempIds[i]))
+                {
+                    participants[participantCount++] = tempIds[i];
+                }
+            }
+            else
+            {
+                invalidIds[invalidCount++] = tempIds[i];
             }
         }
-        else
+
+        if (participantCount <= 0)
         {
-            invalidParticipants++;
+            std::cout << "No valid participants.\n";
+            int action = readInt("Re-enter participants? (1) Yes (0) Cancel: ");
+            if (action == 0)
+            {
+                std::cout << "Cancelled.\n";
+                return false;
+            }
+            continue;
+        }
+
+        std::cout << "Participants: ";
+        printMemberListWithNames(participants, participantCount, ms);
+        std::cout << "\n";
+
+        if (invalidCount > 0)
+        {
+            std::cout << "Invalid participant IDs: ";
+            printIdList(invalidIds, invalidCount);
+            std::cout << "\n";
+        }
+
+        int confirm = readInt("Confirm participants? (1) Yes (0) Re-enter (2) Cancel: ");
+        if (confirm == 1)
+        {
+            break;
+        }
+        if (confirm == 2)
+        {
+            std::cout << "Cancelled.\n";
+            return false;
         }
     }
-
-    if (participantCount <= 0)
-    {
-        std::cout << "No valid participants.\n";
-        return false;
-    }
-
-    char winnersInput[256];
-    readLine("Enter winner member IDs (comma-separated, optional): ", winnersInput, sizeof(winnersInput));
-
-    int tempWinners[64];
-    int tempWinCount = parseIdList(winnersInput, tempWinners, 64);
 
     int winners[64];
     int winnerCount = 0;
-    int invalidWinners = 0;
-    for (int i = 0; i < tempWinCount; i++)
+    while (true)
     {
-        if (containsId(participants, participantCount, tempWinners[i]))
+        char winnersInput[256];
+        readLine("Enter winner member IDs (comma-separated, optional): ", winnersInput, sizeof(winnersInput));
+        if (winnersInput[0] == '\0')
         {
-            if (!containsId(winners, winnerCount, tempWinners[i]))
+            winnerCount = 0;
+            break;
+        }
+
+        int tempWinCount = parseIdList(winnersInput, tempIds, 64);
+
+        winnerCount = 0;
+        int invalidWinnerIds[64];
+        int invalidWinnerCount = 0;
+        int notParticipantIds[64];
+        int notParticipantCount = 0;
+        for (int i = 0; i < tempWinCount; i++)
+        {
+            if (ms.getMemberById(tempIds[i]) == nullptr)
             {
-                winners[winnerCount++] = tempWinners[i];
+                invalidWinnerIds[invalidWinnerCount++] = tempIds[i];
+            }
+            else if (!containsId(participants, participantCount, tempIds[i]))
+            {
+                notParticipantIds[notParticipantCount++] = tempIds[i];
+            }
+            else
+            {
+                if (!containsId(winners, winnerCount, tempIds[i]))
+                {
+                    winners[winnerCount++] = tempIds[i];
+                }
             }
         }
-        else
+
+        if (winnerCount <= 0)
         {
-            invalidWinners++;
+            std::cout << "No valid winners entered.\n";
+            if (invalidWinnerCount > 0)
+            {
+                std::cout << "Invalid winner IDs: ";
+                printIdList(invalidWinnerIds, invalidWinnerCount);
+                std::cout << "\n";
+            }
+            if (notParticipantCount > 0)
+            {
+                std::cout << "Winner IDs not in participant list: ";
+                printIdList(notParticipantIds, notParticipantCount);
+                std::cout << "\n";
+            }
+            int action = readInt("No valid winners. (1) Re-enter (2) Skip winners (0) Cancel: ");
+            if (action == 2)
+            {
+                winnerCount = 0;
+                break;
+            }
+            if (action == 0)
+            {
+                std::cout << "Cancelled.\n";
+                return false;
+            }
+            continue;
+        }
+
+        std::cout << "Winners: ";
+        printMemberListWithNames(winners, winnerCount, ms);
+        std::cout << "\n";
+
+        if (invalidWinnerCount > 0)
+        {
+            std::cout << "Invalid winner IDs: ";
+            printIdList(invalidWinnerIds, invalidWinnerCount);
+            std::cout << "\n";
+        }
+        if (notParticipantCount > 0)
+        {
+            std::cout << "Winner IDs not in participant list: ";
+            printIdList(notParticipantIds, notParticipantCount);
+            std::cout << "\n";
+        }
+
+        int confirm = readInt("Confirm winners? (1) Yes (0) Re-enter (2) Skip winners (3) Cancel: ");
+        if (confirm == 1)
+        {
+            break;
+        }
+        if (confirm == 2)
+        {
+            winnerCount = 0;
+            break;
+        }
+        if (confirm == 3)
+        {
+            std::cout << "Cancelled.\n";
+            return false;
         }
     }
 
@@ -1321,19 +1595,88 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
     char winnersStr[256];
     buildIdListString(participants, participantCount, participantsStr, sizeof(participantsStr));
     buildIdListString(winners, winnerCount, winnersStr, sizeof(winnersStr));
-    addPlayRecord(gameId, g->title, participantsStr, winnersStr);
+    char playedAt[20];
+    getCurrentTimestamp(playedAt, sizeof(playedAt));
+    addPlayRecord(gameId, g->title, participantsStr, winnersStr, playedAt);
 
     std::cout << "Play recorded.\n";
-    if (invalidParticipants > 0)
-    {
-        std::cout << "Skipped " << invalidParticipants << " invalid participant ID(s).\n";
-    }
-    if (invalidWinners > 0)
-    {
-        std::cout << "Skipped " << invalidWinners << " winner ID(s) not in participant list.\n";
-    }
 
     return true;
+}
+
+static void showPlayRecords(MemberService& ms)
+{
+    if (g_playHead == nullptr)
+    {
+        std::cout << "No play records.\n";
+        return;
+    }
+
+    int index = 1;
+    PlayRecord* pr = g_playHead;
+    while (pr != nullptr)
+    {
+        std::cout << "\n" << index << ") ";
+        if (pr->playedAt[0] != '\0')
+        {
+            std::cout << pr->playedAt;
+        }
+        else
+        {
+            std::cout << "Unknown date";
+        }
+        std::cout << " | Game: " << pr->gameTitle << " (ID " << pr->gameId << ")\n";
+
+        int participants[64];
+        int participantCount = parseIdList(pr->participants, participants, 64);
+        int winners[64];
+        int winnerCount = parseIdList(pr->winners, winners, 64);
+
+        std::cout << "Participants: ";
+        printMemberListWithNames(participants, participantCount, ms);
+        std::cout << "\n";
+
+        std::cout << "Winners: ";
+        if (winnerCount > 0)
+        {
+            printMemberListWithNames(winners, winnerCount, ms);
+        }
+        else
+        {
+            std::cout << "None recorded";
+        }
+        std::cout << "\n";
+
+        std::cout << "Losers: ";
+        if (winnerCount > 0)
+        {
+            int losers[64];
+            int loserCount = 0;
+            for (int i = 0; i < participantCount; i++)
+            {
+                if (!containsId(winners, winnerCount, participants[i]))
+                {
+                    losers[loserCount++] = participants[i];
+                }
+            }
+            if (loserCount > 0)
+            {
+                printMemberListWithNames(losers, loserCount, ms);
+            }
+            else
+            {
+                std::cout << "None";
+            }
+        }
+        else
+        {
+            std::cout << "None recorded";
+        }
+        std::cout << "\n";
+
+        pr = pr->next;
+        index++;
+    }
 }
 
 static void showRecommendations(GameService& gs, int memberId)
@@ -1548,6 +1891,7 @@ static void listAllGames(GameService& gs, bool isAdmin)
         return;
     }
 
+    sortGamesByTitle(list, count);
     for (int i = 0; i < count; i++)
     {
         printGameShort(list[i], gs, isAdmin);
@@ -1748,6 +2092,8 @@ int main()
                 continue;
             }
 
+            std::cout << "Member: " << member->name << "\n";
+
             bool memberMenu = true;
             while (memberMenu)
             {
@@ -1762,6 +2108,7 @@ int main()
                 std::cout << "8. View game reviews\n";
                 std::cout << "9. Record game play\n";
                 std::cout << "10. Recommendations\n";
+                std::cout << "11. View play records\n";
                 std::cout << "0. Back\n";
 
                 int m = readInt("Select: ");
@@ -1820,7 +2167,40 @@ int main()
                 }
                 else if (m == 4)
                 {
-                    int gameId = readInt("Game ID to rate: ");
+                    int mode = readInt("Rate by (1) Game ID or (2) name: ");
+                    int gameId = -1;
+                    if (mode == 1)
+                    {
+                        gameId = readInt("Game ID to rate: ");
+                        Game* g = gs.findById(gameId);
+                        if (g == nullptr)
+                        {
+                            std::cout << "Game not found.\n";
+                            continue;
+                        }
+                        std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
+                        int confirm = readInt("Rate this game? (1) Yes (0) No: ");
+                        if (confirm != 1)
+                        {
+                            std::cout << "Cancelled.\n";
+                            continue;
+                        }
+                    }
+                    else if (mode == 2)
+                    {
+                        gameId = selectGameByName(gs, false);
+                    }
+                    else
+                    {
+                        std::cout << "Invalid choice.\n";
+                        continue;
+                    }
+
+                    if (gameId <= 0)
+                    {
+                        continue;
+                    }
+
                     int rating = readInt("Rating (1-10): ");
                     if (gs.rateGame(memberId, gameId, rating))
                     {
@@ -1861,6 +2241,10 @@ int main()
                 else if (m == 10)
                 {
                     showRecommendations(gs, memberId);
+                }
+                else if (m == 11)
+                {
+                    showPlayRecords(ms);
                 }
             }
         }
