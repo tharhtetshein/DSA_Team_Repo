@@ -301,6 +301,24 @@ static void printMemberListWithNames(const int* ids, int count, MemberService& m
     }
 }
 
+static void printMemberDirectory(MemberService& ms)
+{
+    MemberList& list = ms.getMemberList();
+    MemberNode* cur = list.getHead();
+    if (cur == nullptr)
+    {
+        std::cout << "No members registered.\n";
+        return;
+    }
+
+    std::cout << "Members:\n";
+    while (cur != nullptr)
+    {
+        std::cout << "ID " << cur->data.memberId << " - " << cur->data.name << "\n";
+        cur = cur->next;
+    }
+}
+
 static int parseIdList(const char* list, int* outIds, int maxIds)
 {
     if (list == nullptr || outIds == nullptr || maxIds <= 0)
@@ -1374,16 +1392,30 @@ static void listGamesByPlayers(GameService& gs, bool isAdmin)
 
 static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
 {
-    int choice = readInt("Find by (1) ID or (2) name: ");
-    int gameId = -1;
-    bool needsConfirm = false;
+    std::cout << "\n--- Record Game Play ---\n";
+    std::cout << "Tip: type 'list' to view members, 'cancel' to abort.\n";
 
+    int choice = 0;
+    while (choice != 1 && choice != 2)
+    {
+        choice = readInt("Find game by (1) ID or (2) name: ");
+        if (choice != 1 && choice != 2)
+        {
+            std::cout << "Please choose 1 or 2.\n";
+        }
+    }
+
+    int gameId = -1;
     if (choice == 1)
     {
-        gameId = readInt("Enter Game ID: ");
-        needsConfirm = true;
+        gameId = readInt("Enter Game ID (0 to cancel): ");
+        if (gameId == 0)
+        {
+            std::cout << "Cancelled.\n";
+            return false;
+        }
     }
-    else if (choice == 2)
+    else
     {
         gameId = selectGameByName(gs, isAdmin);
     }
@@ -1399,25 +1431,34 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
         std::cout << "Game not found.\n";
         return false;
     }
-    if (needsConfirm)
+
+    std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
+    std::cout << "Players supported: " << g->minPlayers << "-" << g->maxPlayers << "\n";
+    int confirmGame = readInt("Record play for this game? (1) Yes (0) No: ");
+    if (confirmGame != 1)
     {
-        std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
-        int confirm = readInt("Record play for this game? (1) Yes (0) No: ");
-        if (confirm != 1)
-        {
-            std::cout << "Cancelled.\n";
-            return false;
-        }
+        std::cout << "Cancelled.\n";
+        return false;
     }
 
     int tempIds[64];
-
     int participants[64];
     int participantCount = 0;
     while (true)
     {
         char participantsInput[256];
-        readLine("Enter participant member IDs (comma-separated): ", participantsInput, sizeof(participantsInput));
+        readLine("Enter participant IDs (comma-separated): ", participantsInput, sizeof(participantsInput));
+        if (equalsIgnoreCase(participantsInput, "list"))
+        {
+            printMemberDirectory(ms);
+            continue;
+        }
+        if (equalsIgnoreCase(participantsInput, "cancel"))
+        {
+            std::cout << "Cancelled.\n";
+            return false;
+        }
+
         int tempCount = parseIdList(participantsInput, tempIds, 64);
 
         participantCount = 0;
@@ -1461,7 +1502,17 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
             std::cout << "\n";
         }
 
-        int confirm = readInt("Confirm participants? (1) Yes (0) Re-enter (2) Cancel: ");
+        bool outOfRange = (participantCount < g->minPlayers || participantCount > g->maxPlayers);
+        if (outOfRange)
+        {
+            std::cout << "Warning: " << participantCount << " participants, but game supports "
+                << g->minPlayers << "-" << g->maxPlayers << ".\n";
+        }
+
+        const char* prompt = outOfRange
+            ? "Participants outside range. (1) Continue (0) Re-enter (2) Cancel: "
+            : "Confirm participants? (1) Yes (0) Re-enter (2) Cancel: ";
+        int confirm = readInt(prompt);
         if (confirm == 1)
         {
             break;
@@ -1478,8 +1529,27 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
     while (true)
     {
         char winnersInput[256];
-        readLine("Enter winner member IDs (comma-separated, optional): ", winnersInput, sizeof(winnersInput));
-        if (winnersInput[0] == '\0')
+        readLine("Enter winner IDs (comma-separated, blank = none, 'all' = everyone): ", winnersInput, sizeof(winnersInput));
+        if (equalsIgnoreCase(winnersInput, "list"))
+        {
+            printMemberDirectory(ms);
+            continue;
+        }
+        if (equalsIgnoreCase(winnersInput, "cancel"))
+        {
+            std::cout << "Cancelled.\n";
+            return false;
+        }
+        if (equalsIgnoreCase(winnersInput, "all"))
+        {
+            winnerCount = participantCount;
+            for (int i = 0; i < participantCount; i++)
+            {
+                winners[i] = participants[i];
+            }
+            break;
+        }
+        if (winnersInput[0] == '\0' || equalsIgnoreCase(winnersInput, "none"))
         {
             winnerCount = 0;
             break;
@@ -1572,6 +1642,29 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
             std::cout << "Cancelled.\n";
             return false;
         }
+    }
+
+    std::cout << "\nPlay Summary\n";
+    std::cout << "Game: " << g->title << " (ID " << g->gameID << ")\n";
+    std::cout << "Participants (" << participantCount << "): ";
+    printMemberListWithNames(participants, participantCount, ms);
+    std::cout << "\n";
+    std::cout << "Winners (" << winnerCount << "): ";
+    if (winnerCount > 0)
+    {
+        printMemberListWithNames(winners, winnerCount, ms);
+    }
+    else
+    {
+        std::cout << "None recorded";
+    }
+    std::cout << "\n";
+
+    int finalConfirm = readInt("Save this play record? (1) Yes (0) No: ");
+    if (finalConfirm != 1)
+    {
+        std::cout << "Cancelled.\n";
+        return false;
     }
 
     for (int i = 0; i < participantCount; i++)
@@ -2010,26 +2103,187 @@ int main()
                 }
                 else if (a == 1)
                 {
+                    std::cout << "\n--- Add New Game ---\n";
+                    std::cout << "Leave title blank to cancel.\n";
                     char title[101];
                     readLine("Title: ", title, sizeof(title));
-                    int minP = readInt("Min players: ");
-                    int maxP = readInt("Max players: ");
-                    int year = readInt("Year published: ");
-                    int copies = readInt("Copies: ");
+                    if (title[0] == '\0')
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
+
+                    int minP = 0;
+                    while (true)
+                    {
+                        minP = readInt("Min players (>=1, 0 to cancel): ");
+                        if (minP == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            break;
+                        }
+                        if (minP > 0)
+                        {
+                            break;
+                        }
+                        std::cout << "Min players must be at least 1.\n";
+                    }
+                    if (minP == 0)
+                    {
+                        continue;
+                    }
+
+                    int maxP = 0;
+                    while (true)
+                    {
+                        maxP = readInt("Max players (>= min, 0 to cancel): ");
+                        if (maxP == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            break;
+                        }
+                        if (maxP >= minP)
+                        {
+                            break;
+                        }
+                        std::cout << "Max players must be >= min players.\n";
+                    }
+                    if (maxP == 0)
+                    {
+                        continue;
+                    }
+
+                    int year = 0;
+                    while (true)
+                    {
+                        year = readInt("Year published (e.g., 1995, 0 to cancel): ");
+                        if (year == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            break;
+                        }
+                        if (year > 0)
+                        {
+                            break;
+                        }
+                        std::cout << "Year must be a positive number.\n";
+                    }
+                    if (year == 0)
+                    {
+                        continue;
+                    }
+
+                    int copies = 0;
+                    while (true)
+                    {
+                        copies = readInt("Copies (>=1, 0 to cancel): ");
+                        if (copies == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            break;
+                        }
+                        if (copies > 0)
+                        {
+                            break;
+                        }
+                        std::cout << "Copies must be at least 1.\n";
+                    }
+                    if (copies == 0)
+                    {
+                        continue;
+                    }
+
+                    Game* existing = findGameByTitleInsensitive(gs, title);
+                    if (existing != nullptr)
+                    {
+                        std::cout << "Note: This title already exists (ID " << existing->gameID << ").\n";
+                        std::cout << "Current copies: " << existing->copiesAvailable << "/" << existing->copiesTotal
+                            << " | After add: " << (existing->copiesAvailable + copies) << "/" << (existing->copiesTotal + copies) << "\n";
+                    }
+
+                    std::cout << "Add game: " << title
+                        << " | Players: " << minP << "-" << maxP
+                        << " | Year: " << year
+                        << " | Copies: " << copies << "\n";
+                    int confirm = readInt("Confirm add? (1) Yes (0) No: ");
+                    if (confirm != 1)
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
 
                     if (admin.addGame(title, minP, maxP, year, copies))
                     {
-                        std::cout << "Game added.\n";
+                        Game* added = findGameByTitleInsensitive(gs, title);
+                        if (added != nullptr)
+                        {
+                            std::cout << "Game added. ID " << added->gameID
+                                << " | Copies: " << added->copiesAvailable << "/" << added->copiesTotal << "\n";
+                        }
+                        else
+                        {
+                            std::cout << "Game added.\n";
+                        }
                         autoSaveGames(gs, gamesPath);
                     }
                     else
                     {
-                        std::cout << "Failed to add game.\n";
+                        std::cout << "Failed to add game. Check inputs.\n";
                     }
                 }
                 else if (a == 2)
                 {
-                    int id = readInt("Game ID to remove: ");
+                    std::cout << "\n--- Remove Game ---\n";
+                    int mode = readInt("Remove by (1) ID or (2) name: ");
+                    int id = -1;
+                    if (mode == 1)
+                    {
+                        id = readInt("Enter Game ID (0 to cancel): ");
+                        if (id == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            continue;
+                        }
+                    }
+                    else if (mode == 2)
+                    {
+                        id = selectGameByName(gs, true);
+                    }
+                    else
+                    {
+                        std::cout << "Invalid choice.\n";
+                        continue;
+                    }
+
+                    if (id <= 0)
+                    {
+                        continue;
+                    }
+
+                    Game* g = gs.findById(id);
+                    if (g == nullptr)
+                    {
+                        std::cout << "Game not found.\n";
+                        continue;
+                    }
+
+                    std::cout << "Selected game:\n";
+                    printGameShort(g, gs, true);
+
+                    int borrowedCopies = g->copiesTotal - g->copiesAvailable;
+                    if (borrowedCopies > 0)
+                    {
+                        std::cout << "Cannot remove: " << borrowedCopies << " copy(ies) currently borrowed.\n";
+                        continue;
+                    }
+
+                    int confirm = readInt("Remove this game? (1) Yes (0) No: ");
+                    if (confirm != 1)
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
+
                     if (admin.removeGame(id))
                     {
                         std::cout << "Game removed.\n";
@@ -2037,19 +2291,63 @@ int main()
                     }
                     else
                     {
-                        std::cout << "Failed to remove. Check if copies are borrowed.\n";
+                        std::cout << "Failed to remove game.\n";
                     }
                 }
                 else if (a == 3)
                 {
-                    int memberId = readInt("Member ID: ");
+                    std::cout << "\n--- Add Member ---\n";
+                    int memberId = readInt("Member ID (0 to cancel): ");
+                    if (memberId == 0)
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
+
+                    Member* existingMember = ms.getMemberById(memberId);
+                    if (existingMember != nullptr)
+                    {
+                        std::cout << "Member ID already exists: " << existingMember->name << "\n";
+                        continue;
+                    }
+
                     char name[60];
-                    readLine("Member name: ", name, sizeof(name));
+                    while (true)
+                    {
+                        readLine("Member name (blank to cancel): ", name, sizeof(name));
+                        if (name[0] == '\0')
+                        {
+                            std::cout << "Cancelled.\n";
+                            break;
+                        }
+                        break;
+                    }
+                    if (name[0] == '\0')
+                    {
+                        continue;
+                    }
+
+                    std::cout << "Add member: " << memberId << " - " << name << "\n";
+                    int confirm = readInt("Confirm add? (1) Yes (0) No: ");
+                    if (confirm != 1)
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
+
                     Status s = ms.addMember(memberId, name);
                     if (s == OK)
                     {
                         std::cout << "Member added.\n";
                         autoSaveMembers(ms, gs, membersPath);
+                    }
+                    else if (s == ALREADY_EXISTS)
+                    {
+                        std::cout << "Member ID already exists.\n";
+                    }
+                    else if (s == INVALID_INPUT)
+                    {
+                        std::cout << "Invalid input. Check the ID and name.\n";
                     }
                     else
                     {
@@ -2122,15 +2420,41 @@ int main()
                     int gameId = -1;
                     if (mode == 1)
                     {
-                        gameId = readInt("Enter Game ID: ");
+                        gameId = readInt("Enter Game ID (0 to cancel): ");
+                        if (gameId == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            continue;
+                        }
                     }
                     else if (mode == 2)
                     {
                         gameId = selectGameByName(gs, false);
                     }
+                    else
+                    {
+                        std::cout << "Invalid choice.\n";
+                        continue;
+                    }
 
                     if (gameId <= 0)
                     {
+                        continue;
+                    }
+
+                    Game* g = gs.findById(gameId);
+                    if (g == nullptr)
+                    {
+                        std::cout << "Game not found.\n";
+                        continue;
+                    }
+
+                    std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
+                    int confirm = readInt(m == 1 ? "Borrow this game? (1) Yes (0) No: "
+                                                  : "Return this game? (1) Yes (0) No: ");
+                    if (confirm != 1)
+                    {
+                        std::cout << "Cancelled.\n";
                         continue;
                     }
 

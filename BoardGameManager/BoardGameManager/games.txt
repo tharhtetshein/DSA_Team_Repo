@@ -33,7 +33,6 @@ GAME|31|Archaeology: The Card Game|2|4|2007|1
 GAME|32|Archaeology: The New Expedition|2|5|2016|1
 GAME|33|Architects of the West Kingdom|1|5|2018|1
 GAME|34|Arena: Roma II|2|2|2009|1
-GAME|35|"Artifacts|0|2|60|1
 GAME|36|Asante|2|2|2013|1
 GAME|37|Ascension: Storm of Souls|1|4|2011|1
 GAME|38|At the Gates of Loyang|1|4|2009|1
@@ -79,7 +78,6 @@ GAME|77|Bruges|2|4|2013|1
 GAME|78|Brynk|2|99|2016|1
 GAME|79|Buccaneer Bones|1|4|2013|1
 GAME|80|Bunny Kingdom|2|4|2017|1
-GAME|81|"But Wait|0|3|30|1
 GAME|82|Butterfly Garden|2|4|2012|1
 GAME|83|BuyWord|1|4|2004|1
 GAME|84|Ca$h 'n Gun$|4|6|2005|1
@@ -239,7 +237,6 @@ GAME|237|Glass Road|1|4|2013|1
 GAME|238|Gloom|2|5|2005|1
 GAME|239|The Gnomes of Zavandor|2|4|2011|1
 GAME|240|Going Postal|3|6|2019|1
-GAME|241|"Going|0|0|20|1
 GAME|242|Good Cop Bad Cop|4|8|2014|1
 GAME|243|Grand Austria Hotel|2|4|2015|1
 GAME|244|The Grand Carnival|1|4|2020|1
@@ -263,7 +260,6 @@ GAME|261|Le Havre|1|5|2008|1
 GAME|262|Heat: Pedal to the Metal|1|6|2022|1
 GAME|263|Herd Mentality|4|20|2020|1
 GAME|264|Here to Slay|2|6|2020|1
-GAME|265|"Hey|0|2|20|1
 GAME|266|High Society|3|5|1995|1
 GAME|267|Hoity Toity|2|5|1990|1
 GAME|268|Horrified|1|5|2019|1
@@ -461,7 +457,6 @@ GAME|459|Roll Through the Ages: The Bronze Age|1|4|2008|1
 GAME|460|Room 25|1|6|2013|1
 GAME|461|Royals|2|5|2014|1
 GAME|462|Rummikub|2|4|1977|1
-GAME|463|"Run|0|0|40|1
 GAME|464|Russian Railroads|2|4|2013|1
 GAME|465|Saboteur|3|10|2004|2
 GAME|466|Sail to India|3|4|2013|1
@@ -615,3 +610,4 @@ GAME|613|Zendo|2|6|2001|1
 GAME|614|Zeus on the Loose|2|5|2006|1
 GAME|615|Zombie Fluxx|2|6|2007|1
 GAME|616|Zooloretto|2|5|2007|1
+GAME|617|Hacker Royale|10|50|2025|2
