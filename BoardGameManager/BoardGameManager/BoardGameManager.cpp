@@ -1190,7 +1190,7 @@ static void printGameShort(const Game* g, const GameService& gs, bool isAdmin)
 static int selectGameByName(GameService& gs, bool isAdmin)
 {
     char query[101];
-    readLine("Enter part of the game name: ", query, sizeof(query));
+    readLine("Enter the game name: ", query, sizeof(query));
     if (query[0] == '\0')
     {
         return -1;
@@ -1242,16 +1242,23 @@ static int selectGameByName(GameService& gs, bool isAdmin)
 
 static void showGameDetails(GameService& gs, bool isAdmin)
 {
-    int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
 
-    if (choice == 1)
+    if (isAdmin)
     {
-        gameId = readInt("Enter Game ID: ");
+        int choice = readInt("Find by (1) ID or (2) name: ");
+        if (choice == 1)
+        {
+            gameId = readInt("Enter Game ID: ");
+        }
+        else if (choice == 2)
+        {
+            gameId = selectGameByName(gs, isAdmin);
+        }
     }
-    else if (choice == 2)
+    else
     {
-        gameId = selectGameByName(gs, isAdmin);
+        gameId = selectGameByName(gs, false);
     }
 
     if (gameId <= 0)
@@ -1272,16 +1279,23 @@ static void showGameDetails(GameService& gs, bool isAdmin)
 
 static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
 {
-    int choice = readInt("Find by (1) ID or (2) name: ");
     int gameId = -1;
 
-    if (choice == 1)
+    if (isAdmin)
     {
-        gameId = readInt("Enter Game ID: ");
+        int choice = readInt("Find by (1) ID or (2) name: ");
+        if (choice == 1)
+        {
+            gameId = readInt("Enter Game ID: ");
+        }
+        else if (choice == 2)
+        {
+            gameId = selectGameByName(gs, isAdmin);
+        }
     }
-    else if (choice == 2)
+    else
     {
-        gameId = selectGameByName(gs, isAdmin);
+        gameId = selectGameByName(gs, false);
     }
 
     if (gameId <= 0)
@@ -1333,16 +1347,23 @@ static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
 
 static bool writeGameReview(GameService& gs, bool isAdmin, int memberId)
 {
-    int mode = readInt("Review by (1) Game ID or (2) name: ");
     int gameId = -1;
 
-    if (mode == 1)
+    if (isAdmin)
     {
-        gameId = readInt("Game ID to review: ");
+        int mode = readInt("Review by (1) Game ID or (2) name: ");
+        if (mode == 1)
+        {
+            gameId = readInt("Game ID to review: ");
+        }
+        else if (mode == 2)
+        {
+            gameId = selectGameByName(gs, isAdmin);
+        }
     }
-    else if (mode == 2)
+    else
     {
-        gameId = selectGameByName(gs, isAdmin);
+        gameId = selectGameByName(gs, false);
     }
 
     if (gameId <= 0)
@@ -1395,29 +1416,36 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
     std::cout << "\n--- Record Game Play ---\n";
     std::cout << "Tip: type 'list' to view members, 'cancel' to abort.\n";
 
-    int choice = 0;
-    while (choice != 1 && choice != 2)
-    {
-        choice = readInt("Find game by (1) ID or (2) name: ");
-        if (choice != 1 && choice != 2)
-        {
-            std::cout << "Please choose 1 or 2.\n";
-        }
-    }
-
     int gameId = -1;
-    if (choice == 1)
+    if (isAdmin)
     {
-        gameId = readInt("Enter Game ID (0 to cancel): ");
-        if (gameId == 0)
+        int choice = 0;
+        while (choice != 1 && choice != 2)
         {
-            std::cout << "Cancelled.\n";
-            return false;
+            choice = readInt("Find game by (1) ID or (2) name: ");
+            if (choice != 1 && choice != 2)
+            {
+                std::cout << "Please choose 1 or 2.\n";
+            }
+        }
+
+        if (choice == 1)
+        {
+            gameId = readInt("Enter Game ID (0 to cancel): ");
+            if (gameId == 0)
+            {
+                std::cout << "Cancelled.\n";
+                return false;
+            }
+        }
+        else
+        {
+            gameId = selectGameByName(gs, isAdmin);
         }
     }
     else
     {
-        gameId = selectGameByName(gs, isAdmin);
+        gameId = selectGameByName(gs, false);
     }
 
     if (gameId <= 0)
@@ -2416,26 +2444,7 @@ int main()
                 }
                 else if (m == 1 || m == 2)
                 {
-                    int mode = readInt("Find by (1) ID or (2) name: ");
-                    int gameId = -1;
-                    if (mode == 1)
-                    {
-                        gameId = readInt("Enter Game ID (0 to cancel): ");
-                        if (gameId == 0)
-                        {
-                            std::cout << "Cancelled.\n";
-                            continue;
-                        }
-                    }
-                    else if (mode == 2)
-                    {
-                        gameId = selectGameByName(gs, false);
-                    }
-                    else
-                    {
-                        std::cout << "Invalid choice.\n";
-                        continue;
-                    }
+                    int gameId = selectGameByName(gs, false);
 
                     if (gameId <= 0)
                     {
@@ -2491,37 +2500,24 @@ int main()
                 }
                 else if (m == 4)
                 {
-                    int mode = readInt("Rate by (1) Game ID or (2) name: ");
-                    int gameId = -1;
-                    if (mode == 1)
-                    {
-                        gameId = readInt("Game ID to rate: ");
-                        Game* g = gs.findById(gameId);
-                        if (g == nullptr)
-                        {
-                            std::cout << "Game not found.\n";
-                            continue;
-                        }
-                        std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
-                        int confirm = readInt("Rate this game? (1) Yes (0) No: ");
-                        if (confirm != 1)
-                        {
-                            std::cout << "Cancelled.\n";
-                            continue;
-                        }
-                    }
-                    else if (mode == 2)
-                    {
-                        gameId = selectGameByName(gs, false);
-                    }
-                    else
-                    {
-                        std::cout << "Invalid choice.\n";
-                        continue;
-                    }
+                    int gameId = selectGameByName(gs, false);
 
                     if (gameId <= 0)
                     {
+                        continue;
+                    }
+
+                    Game* g = gs.findById(gameId);
+                    if (g == nullptr)
+                    {
+                        std::cout << "Game not found.\n";
+                        continue;
+                    }
+                    std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
+                    int confirm = readInt("Rate this game? (1) Yes (0) No: ");
+                    if (confirm != 1)
+                    {
+                        std::cout << "Cancelled.\n";
                         continue;
                     }
 
