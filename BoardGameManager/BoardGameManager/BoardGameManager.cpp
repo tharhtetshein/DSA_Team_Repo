@@ -1169,20 +1169,28 @@ static void printGameShort(const Game* g, const GameService& gs, bool isAdmin)
 
     if (isAdmin)
     {
-        std::cout << "ID: " << g->gameID << " | " << g->title
-            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
-            << " | Year: " << g->yearPublished
-            << " | Copies: " << g->copiesAvailable << "/" << g->copiesTotal
-            << " | Avg Rating: " << gs.getAverageRating(g)
-            << " | Reviews: " << g->reviewCount << "\n";
+        std::cout << "ID: " << std::setw(3) << g->gameID << " | Title: " << g->title << "\n"
+            << "        | Players: " << g->minPlayers << "-" << g->maxPlayers << "\n"
+            << "        | Year: " << g->yearPublished << "\n"
+            << "        | Copies: " << g->copiesAvailable << "/" << g->copiesTotal << "\n";
+        if (g->reviewCount > 0)
+        {
+            std::cout << "        | Avg Rating: " << gs.getAverageRating(g) << "\n"
+                << "        | Reviews: " << g->reviewCount << "\n";
+        }
+        std::cout << "\n";
     }
     else
     {
-        std::cout << g->title
-            << " | Players: " << g->minPlayers << "-" << g->maxPlayers
-            << " | Year: " << g->yearPublished
-            << " | Avg Rating: " << gs.getAverageRating(g)
-            << " | Reviews: " << g->reviewCount << "\n";
+        std::cout << "| Title: " << g->title << "\n"
+            << "        | Players: " << g->minPlayers << "-" << g->maxPlayers << "\n"
+            << "        | Year: " << g->yearPublished << "\n";
+        if (g->reviewCount > 0)
+        {
+            std::cout << "        | Avg Rating: " << gs.getAverageRating(g) << "\n"
+                << "        | Reviews: " << g->reviewCount << "\n";
+        }
+        std::cout << "\n";
     }
 }
 
@@ -1213,7 +1221,16 @@ static int selectGameByName(GameService& gs, bool isAdmin)
         }
         else
         {
-            std::cout << (i + 1) << ") ";
+            int idx = i + 1;
+            char prefix[16];
+            snprintf(prefix, sizeof(prefix), "%d)", idx);
+            std::cout << prefix;
+            const int targetWidth = 8;
+            int pad = targetWidth - (int)strlen(prefix);
+            for (int p = 0; p < pad; p++)
+            {
+                std::cout << " ";
+            }
             printGameShort(matches[i], gs, false);
         }
     }
@@ -1304,15 +1321,6 @@ static void showGameReviews(GameService& gs, MemberService& ms, bool isAdmin)
     }
 
     ReviewSortOption sortOption = REVIEW_SORT_NONE;
-    int sortChoice = readInt("Sort reviews by (1) Rating desc, (2) Member ID asc, (0) None: ");
-    if (sortChoice == 1)
-    {
-        sortOption = REVIEW_SORT_RATING_DESC;
-    }
-    else if (sortChoice == 2)
-    {
-        sortOption = REVIEW_SORT_MEMBER_ASC;
-    }
 
     ReviewNode** list = nullptr;
     int count = gs.getReviewsForGame(gameId, list, sortOption);
