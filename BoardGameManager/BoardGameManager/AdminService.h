@@ -12,6 +12,7 @@ public:
     AdminService(GameService* service);
 
     bool addGame(const char* title, int minPlayers, int maxPlayers, int year, int copies);
+    bool overwriteGame(int gameID, const char* title, int minPlayers, int maxPlayers, int year, int copies);
     bool removeGame(int gameID);
 };
 

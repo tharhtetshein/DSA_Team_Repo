@@ -414,6 +414,7 @@ static void getCurrentTimestamp(char* out, int size)
 
 static void addPlayRecord(int gameId, const char* title, const char* participants, const char* winners, const char* playedAt)
 {
+    // Ray Feature: Keep play history in a linked list (append at tail).
     PlayRecord* node = new PlayRecord();
     node->gameId = gameId;
     sanitizeForSave(title, node->gameTitle, sizeof(node->gameTitle));
@@ -434,6 +435,7 @@ static void addPlayRecord(int gameId, const char* title, const char* participant
 
 static void applyPlayStats(MemberService& ms, const char* participants, const char* winners)
 {
+    // Ray Feature: Update member play/win counters from a recorded match.
     int ids[64];
     int count = parseIdList(participants, ids, 64);
     for (int i = 0; i < count; i++)
@@ -1238,11 +1240,15 @@ static int selectGameByName(GameService& gs, bool isAdmin)
     int chosenId = -1;
     if (isAdmin)
     {
-        chosenId = readInt("Enter Game ID from the list: ");
+        chosenId = readInt("Enter Game ID from the list (0 to cancel): ");
+        if (chosenId == 0)
+        {
+            chosenId = -1;
+        }
     }
     else
     {
-        int idx = readInt("Select a number from the list: ");
+        int idx = readInt("Select a number from the list (0 to cancel): ");
         if (idx >= 1 && idx <= count)
         {
             chosenId = matches[idx - 1]->gameID;
@@ -1421,6 +1427,7 @@ static void listGamesByPlayers(GameService& gs, bool isAdmin)
 
 static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
 {
+    // Ray Feature: Collect participants/winners and save a game-play record.
     std::cout << "\n--- Record Game Play ---\n";
     std::cout << "Tip: type 'list' to view members, 'cancel' to abort.\n";
 
@@ -1735,6 +1742,7 @@ static bool recordGamePlay(GameService& gs, MemberService& ms, bool isAdmin)
 
 static void showPlayRecords(MemberService& ms)
 {
+    // Ray Feature: Display saved play history to users.
     if (g_playHead == nullptr)
     {
         std::cout << "No play records.\n";
@@ -2139,6 +2147,7 @@ int main()
                 }
                 else if (a == 1)
                 {
+                    // Ray Feature: Add new board game (with duplicate-title handling).
                     std::cout << "\n--- Add New Game ---\n";
                     std::cout << "Leave title blank to cancel.\n";
                     char title[101];
@@ -2230,49 +2239,111 @@ int main()
                     }
 
                     Game* existing = findGameByTitleInsensitive(gs, title);
+                    bool overwriteExisting = false;
                     if (existing != nullptr)
                     {
+                        int borrowedCopies = existing->copiesTotal - existing->copiesAvailable;
+                        if (borrowedCopies < 0)
+                        {
+                            borrowedCopies = 0;
+                        }
+
                         std::cout << "Note: This title already exists (ID " << existing->gameID << ").\n";
-                        std::cout << "Current copies: " << existing->copiesAvailable << "/" << existing->copiesTotal
-                            << " | After add: " << (existing->copiesAvailable + copies) << "/" << (existing->copiesTotal + copies) << "\n";
+                        std::cout << "1. Add copies to existing game\n";
+                        std::cout << "2. Overwrite existing game details\n";
+                        std::cout << "0. Cancel\n";
+
+                        int action = -1;
+                        while (true)
+                        {
+                            action = readInt("Select action: ");
+                            if (action == 0 || action == 1 || action == 2)
+                            {
+                                break;
+                            }
+                            std::cout << "Invalid choice.\n";
+                        }
+
+                        if (action == 0)
+                        {
+                            std::cout << "Cancelled.\n";
+                            continue;
+                        }
+
+                        overwriteExisting = (action == 2);
+                        if (overwriteExisting)
+                        {
+                            if (copies < borrowedCopies)
+                            {
+                                std::cout << "Cannot overwrite: " << borrowedCopies
+                                    << " copy(ies) currently borrowed, so copies must be >= " << borrowedCopies << ".\n";
+                                continue;
+                            }
+
+                            std::cout << "Current copies: " << existing->copiesAvailable << "/" << existing->copiesTotal
+                                << " | After overwrite: " << (copies - borrowedCopies) << "/" << copies << "\n";
+                        }
+                        else
+                        {
+                            std::cout << "Current copies: " << existing->copiesAvailable << "/" << existing->copiesTotal
+                                << " | After add: " << (existing->copiesAvailable + copies) << "/" << (existing->copiesTotal + copies) << "\n";
+                        }
                     }
 
-                    std::cout << "Add game: " << title
+                    std::cout << (overwriteExisting ? "Overwrite game: " : "Add game: ") << title
                         << " | Players: " << minP << "-" << maxP
                         << " | Year: " << year
                         << " | Copies: " << copies << "\n";
-                    int confirm = readInt("Confirm add? (1) Yes (0) No: ");
+                    int confirm = readInt(overwriteExisting ? "Confirm overwrite? (1) Yes (0) No: " : "Confirm add? (1) Yes (0) No: ");
                     if (confirm != 1)
                     {
                         std::cout << "Cancelled.\n";
                         continue;
                     }
 
-                    if (admin.addGame(title, minP, maxP, year, copies))
+                    bool ok = false;
+                    if (overwriteExisting && existing != nullptr)
+                    {
+                        ok = admin.overwriteGame(existing->gameID, title, minP, maxP, year, copies);
+                    }
+                    else
+                    {
+                        ok = admin.addGame(title, minP, maxP, year, copies);
+                    }
+
+                    if (ok)
                     {
                         Game* added = findGameByTitleInsensitive(gs, title);
                         if (added != nullptr)
                         {
-                            std::cout << "Game added. ID " << added->gameID
+                            std::cout << (overwriteExisting ? "Game overwritten. ID " : "Game added. ID ") << added->gameID
                                 << " | Copies: " << added->copiesAvailable << "/" << added->copiesTotal << "\n";
                         }
                         else
                         {
-                            std::cout << "Game added.\n";
+                            std::cout << (overwriteExisting ? "Game overwritten.\n" : "Game added.\n");
                         }
                         autoSaveGames(gs, gamesPath);
                     }
                     else
                     {
-                        std::cout << "Failed to add game. Check inputs.\n";
+                        std::cout << (overwriteExisting
+                            ? "Failed to overwrite game. Check inputs and borrowed copies.\n"
+                            : "Failed to add game. Check inputs.\n");
                     }
                 }
                 else if (a == 2)
                 {
+                    // Ray Feature: Remove board game by ID or by name search.
                     std::cout << "\n--- Remove Game ---\n";
-                    int mode = readInt("Remove by (1) ID or (2) name: ");
+                    int mode = readInt("Remove by (1) ID or (2) name (0 to cancel): ");
                     int id = -1;
-                    if (mode == 1)
+                    if (mode == 0)
+                    {
+                        std::cout << "Cancelled.\n";
+                        continue;
+                    }
+                    else if (mode == 1)
                     {
                         id = readInt("Enter Game ID (0 to cancel): ");
                         if (id == 0)
@@ -2293,6 +2364,7 @@ int main()
 
                     if (id <= 0)
                     {
+                        std::cout << "Cancelled.\n";
                         continue;
                     }
 
@@ -2332,6 +2404,7 @@ int main()
                 }
                 else if (a == 3)
                 {
+                    // Ray Feature: Register a new member.
                     std::cout << "\n--- Add Member ---\n";
                     int memberId = readInt("Member ID (0 to cancel): ");
                     if (memberId == 0)
@@ -2392,6 +2465,7 @@ int main()
                 }
                 else if (a == 4)
                 {
+                    // Ray Feature: Show overall borrow/return summary.
                     ts.adminBorrowReturnSummary();
                 }
                 else if (a == 5)
@@ -2504,6 +2578,7 @@ int main()
                 }
                 else if (m == 3)
                 {
+                    // Ray Feature: Show member-specific borrow/return summary.
                     ts.memberBorrowReturnSummary(memberId);
                 }
                 else if (m == 4)
@@ -2561,6 +2636,7 @@ int main()
                 }
                 else if (m == 9)
                 {
+                    // Ray Feature: Record a game play with participants and winners.
                     if (recordGamePlay(gs, ms, false))
                     {
                         autoSaveMembers(ms, gs, membersPath);

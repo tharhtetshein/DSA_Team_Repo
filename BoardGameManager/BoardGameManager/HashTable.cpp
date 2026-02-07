@@ -41,6 +41,7 @@ int HashTable::hashFunction(int gameID)
 
 bool HashTable::insertGame(const Game& game)
 {
+    // Ray Feature DS: Insert game into hash bucket chain by gameID.
     if (game.gameID <= 0)
     {
         return false;
@@ -61,6 +62,7 @@ bool HashTable::insertGame(const Game& game)
 
 Game* HashTable::findGame(int gameID)
 {
+    // Ray Feature DS: Average O(1) lookup by hashed gameID.
     if (gameID <= 0)
     {
         return nullptr;
@@ -81,6 +83,7 @@ Game* HashTable::findGame(int gameID)
 
 bool HashTable::removeGame(int gameID)
 {
+    // Ray Feature DS: Remove game node from hash bucket chain.
     if (gameID <= 0)
     {
         return false;

@@ -27,6 +27,7 @@ int MemberList::getSize() const {
 }
 
 bool MemberList::addMember(const Member& m) {
+    // Ray Feature DS: Store members in doubly linked list (append to tail).
     // Reject duplicates by memberId
     if (findMember(m.memberId) != nullptr) {
         return false;
@@ -48,6 +49,7 @@ bool MemberList::addMember(const Member& m) {
 }
 
 Member* MemberList::findMember(int memberId) {
+    // Ray Feature DS: Linear search by memberId in linked list.
     MemberNode* cur = head;
     while (cur != nullptr) {
         if (cur->data.memberId == memberId) {

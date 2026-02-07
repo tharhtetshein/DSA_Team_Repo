@@ -610,4 +610,4 @@ GAME|613|Zendo|2|6|2001|1
 GAME|614|Zeus on the Loose|2|5|2006|1
 GAME|615|Zombie Fluxx|2|6|2007|1
 GAME|616|Zooloretto|2|5|2007|1
-GAME|617|Hacker Royale|10|50|2025|2
+GAME|617|Hacker Royale|5|10|1995|5

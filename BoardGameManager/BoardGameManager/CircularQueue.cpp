@@ -30,6 +30,7 @@ int CircularQueue::getCapacity() const {
 }
 
 void CircularQueue::enqueue(const BorrowEvent& e) {
+    // Ray Feature DS: Append borrow/return events with fixed-capacity overwrite.
     // If full, overwrite oldest: advance head by 1 (drop oldest)
     if (isFull()) {
         head = (head + 1) % capacity;
@@ -57,6 +58,7 @@ bool CircularQueue::peek(BorrowEvent& out) const {
 }
 
 bool CircularQueue::getAt(int i, BorrowEvent& out) const {
+    // Ray Feature DS: Read event by logical order for summary/report screens.
     if (i < 0 || i >= count) return false;
     int idx = (head + i) % capacity;
     out = buffer[idx];

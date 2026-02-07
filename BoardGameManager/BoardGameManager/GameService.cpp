@@ -161,6 +161,7 @@ Game* GameService::findByTitleExact(const char* title)
 
 bool GameService::addNewGame(const char* title, int minPlayers, int maxPlayers, int year, int copies)
 {
+    // Ray Feature: Add game metadata; if title exists, merge copies.
     if (title == nullptr || title[0] == '\0' || minPlayers <= 0 || maxPlayers < minPlayers || year <= 0 || copies <= 0)
     {
         return false;
@@ -193,7 +194,49 @@ bool GameService::addNewGame(const char* title, int minPlayers, int maxPlayers, 
     return games.insertGame(g);
 }
 
-// ✅ kept from raybranch because main.cpp uses it to load from games.txt
+bool GameService::overwriteGame(int gameId, const char* title, int minPlayers, int maxPlayers, int year, int copies)
+{
+    // Ray Feature: Overwrite existing game details while preserving active borrows.
+    if (gameId <= 0 || title == nullptr || title[0] == '\0' || minPlayers <= 0 || maxPlayers < minPlayers || year <= 0 || copies <= 0)
+    {
+        return false;
+    }
+
+    Game* existing = games.findGame(gameId);
+    if (existing == nullptr)
+    {
+        return false;
+    }
+
+    Game* byTitle = games.findGameByTitle(title);
+    if (byTitle != nullptr && byTitle->gameID != gameId)
+    {
+        return false;
+    }
+
+    int borrowedCopies = existing->copiesTotal - existing->copiesAvailable;
+    if (borrowedCopies < 0)
+    {
+        borrowedCopies = 0;
+    }
+    if (copies < borrowedCopies)
+    {
+        return false;
+    }
+
+    strncpy_s(existing->title, sizeof(existing->title), title, _TRUNCATE);
+    existing->title[sizeof(existing->title) - 1] = '\0';
+    existing->minPlayers = minPlayers;
+    existing->maxPlayers = maxPlayers;
+    existing->yearPublished = year;
+    existing->copiesTotal = copies;
+    existing->copiesAvailable = copies - borrowedCopies;
+    updateStatus(existing);
+
+    return true;
+}
+
+// Kept from raybranch because main.cpp uses it to load from games.txt
 bool GameService::addNewGameWithId(int gameId, const char* title, int minPlayers, int maxPlayers, int year, int copies)
 {
     if (gameId <= 0 || title == nullptr || title[0] == '\0' || minPlayers <= 0 || maxPlayers < minPlayers || year <= 0 || copies <= 0)
@@ -254,6 +297,7 @@ bool GameService::addNewGameWithId(int gameId, const char* title, int minPlayers
 
 bool GameService::removeGame(int gameId)
 {
+    // Ray Feature: Remove game only when no copies are currently borrowed.
     Game* game = games.findGame(gameId);
     if (game == nullptr)
     {
