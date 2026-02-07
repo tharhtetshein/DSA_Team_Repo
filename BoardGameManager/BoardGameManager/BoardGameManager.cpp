@@ -2452,10 +2452,12 @@ int main()
                 }
                 else if (m == 1 || m == 2)
                 {
-                    int gameId = selectGameByName(gs, false);
+                    std::cout << "\n--- " << (m == 1 ? "Borrow Game" : "Return Game") << " ---\n";
 
+                    int gameId = selectGameByName(gs, false);
                     if (gameId <= 0)
                     {
+                        std::cout << "No game selected.\n";
                         continue;
                     }
 
@@ -2466,19 +2468,35 @@ int main()
                         continue;
                     }
 
-                    std::cout << "Selected game: " << g->title << " (ID " << g->gameID << ")\n";
-                    int confirm = readInt(m == 1 ? "Borrow this game? (1) Yes (0) No: "
-                                                  : "Return this game? (1) Yes (0) No: ");
+                    std::cout << "\nGame Details\n";
+                    std::cout << "---------------------------------\n";
+                    std::cout << "Title   : " << g->title << "\n";
+                    std::cout << "Game ID : " << g->gameID << "\n";
+                    std::cout << "Players : " << g->minPlayers << "-" << g->maxPlayers << "\n";
+                    std::cout << "Copies  : " << g->copiesAvailable << "/" << g->copiesTotal << "\n";
+                    std::cout << "---------------------------------\n";
+
+                    int confirm = readInt(m == 1
+                        ? "Confirm borrow? (1 = Yes, 0 = Cancel): "
+                        : "Confirm return? (1 = Yes, 0 = Cancel): ");
+
                     if (confirm != 1)
                     {
-                        std::cout << "Cancelled.\n";
+                        std::cout << "Action cancelled.\n";
                         continue;
                     }
 
-                    Status result = (m == 1) ? ts.borrowGame(memberId, gameId) : ts.returnGame(memberId, gameId);
+                    Status result = (m == 1)
+                        ? ts.borrowGame(memberId, gameId)
+                        : ts.returnGame(memberId, gameId);
+
+                    std::cout << "\nResult\n";
+                    std::cout << "---------------------------------\n";
+
                     if (result == OK)
                     {
-                        std::cout << (m == 1 ? "Borrowed.\n" : "Returned.\n");
+                        std::cout << (m == 1 ? "Game successfully borrowed.\n"
+                            : "Game successfully returned.\n");
                         autoSaveMembers(ms, gs, membersPath);
                     }
                     else if (result == NOT_FOUND)
@@ -2487,7 +2505,7 @@ int main()
                     }
                     else if (result == NOT_AVAILABLE)
                     {
-                        std::cout << "No available copies.\n";
+                        std::cout << "No available copies to borrow.\n";
                     }
                     else if (result == NOT_BORROWED)
                     {
@@ -2501,6 +2519,8 @@ int main()
                     {
                         std::cout << "Action failed.\n";
                     }
+
+                    std::cout << "---------------------------------\n";
                 }
                 else if (m == 3)
                 {
