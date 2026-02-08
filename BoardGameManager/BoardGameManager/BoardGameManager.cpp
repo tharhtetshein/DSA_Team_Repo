@@ -1820,11 +1820,15 @@ static void showRecommendations(GameService& gs, int memberId)
 {
     const int likeThreshold = 7;
 
+    std::cout << "\n========================================\n";
+    std::cout << "GAME RECOMMENDATIONS\n";
+    std::cout << "========================================\n";
+
     Game** all = nullptr;
     int total = gs.getAllGames(all);
     if (total <= 0 || all == nullptr)
     {
-        std::cout << "No games loaded.\n";
+        std::cout << "No games available in the system.\n";
         return;
     }
 
@@ -1855,7 +1859,8 @@ static void showRecommendations(GameService& gs, int memberId)
 
     if (likedCount == 0)
     {
-        std::cout << "No recommendations yet. Rate some games " << likeThreshold << "+.\n";
+        std::cout << "You have not rated any games " << likeThreshold << " or higher yet.\n";
+        std::cout << "Tip: Rate games you enjoy to unlock personalised recommendations.\n";
         delete[] ratedGameIds;
         delete[] likedGameIds;
         delete[] all;
@@ -1864,7 +1869,8 @@ static void showRecommendations(GameService& gs, int memberId)
 
     if (totalReviews <= 0)
     {
-        std::cout << "No reviews available to build recommendations.\n";
+        std::cout << "There are no reviews in the system yet.\n";
+        std::cout << "Recommendations will improve as more members leave reviews.\n";
         delete[] ratedGameIds;
         delete[] likedGameIds;
         delete[] all;
@@ -1873,6 +1879,7 @@ static void showRecommendations(GameService& gs, int memberId)
 
     int* similarMembers = new int[totalReviews];
     int simCount = 0;
+
     for (int i = 0; i < likedCount; i++)
     {
         Game* g = gs.findById(likedGameIds[i]);
@@ -1880,6 +1887,7 @@ static void showRecommendations(GameService& gs, int memberId)
         {
             continue;
         }
+
         ReviewNode* r = g->reviewsHead;
         while (r != nullptr)
         {
@@ -1896,7 +1904,8 @@ static void showRecommendations(GameService& gs, int memberId)
 
     if (simCount == 0)
     {
-        std::cout << "No similar reviewers yet. Check back after more reviews.\n";
+        std::cout << "No similar reviewers found yet.\n";
+        std::cout << "Try again after more members have reviewed games.\n";
         delete[] ratedGameIds;
         delete[] likedGameIds;
         delete[] similarMembers;
@@ -1918,10 +1927,12 @@ static void showRecommendations(GameService& gs, int memberId)
         {
             continue;
         }
+
         ReviewNode* r = all[i]->reviewsHead;
         while (r != nullptr)
         {
-            if (r->rating >= likeThreshold && containsId(similarMembers, simCount, r->memberId))
+            if (r->rating >= likeThreshold &&
+                containsId(similarMembers, simCount, r->memberId))
             {
                 scoreSum[i] += r->rating;
                 scoreCount[i] += 1;
@@ -1942,7 +1953,8 @@ static void showRecommendations(GameService& gs, int memberId)
 
     if (candCount == 0)
     {
-        std::cout << "No recommendations found yet.\n";
+        std::cout << "No suitable recommendations available at the moment.\n";
+        std::cout << "Rate more games to improve recommendation accuracy.\n";
         delete[] ratedGameIds;
         delete[] likedGameIds;
         delete[] similarMembers;
@@ -1958,28 +1970,27 @@ static void showRecommendations(GameService& gs, int memberId)
         int best = i;
         for (int j = i + 1; j < candCount; j++)
         {
-            int idxBest = candidates[best];
-            int idxCur = candidates[j];
-            double avgBest = scoreSum[idxBest] / (double)scoreCount[idxBest];
-            double avgCur = scoreSum[idxCur] / (double)scoreCount[idxCur];
+            int a = candidates[best];
+            int b = candidates[j];
+
+            double avgA = scoreSum[a] / scoreCount[a];
+            double avgB = scoreSum[b] / scoreCount[b];
 
             bool swapNeeded = false;
-            if (avgCur > avgBest)
+            if (avgB > avgA)
             {
                 swapNeeded = true;
             }
-            else if (avgCur == avgBest)
+            else if (avgB == avgA)
             {
-                if (scoreCount[idxCur] > scoreCount[idxBest])
+                if (scoreCount[b] > scoreCount[a])
                 {
                     swapNeeded = true;
                 }
-                else if (scoreCount[idxCur] == scoreCount[idxBest])
+                else if (scoreCount[b] == scoreCount[a] &&
+                    strcmp(all[b]->title, all[a]->title) < 0)
                 {
-                    if (strcmp(all[idxCur]->title, all[idxBest]->title) < 0)
-                    {
-                        swapNeeded = true;
-                    }
+                    swapNeeded = true;
                 }
             }
 
@@ -1997,17 +2008,22 @@ static void showRecommendations(GameService& gs, int memberId)
         }
     }
 
-    std::cout << "\nRecommendations (based on games you rated " << likeThreshold << "+):\n";
     int limit = (candCount < 10) ? candCount : 10;
+    std::cout << "Based on your ratings (>= " << likeThreshold << "), here are your top recommendations:\n\n";
     std::cout << std::fixed << std::setprecision(2);
+
     for (int i = 0; i < limit; i++)
     {
         int idx = candidates[i];
-        double avg = scoreSum[idx] / (double)scoreCount[idx];
-        std::cout << (i + 1) << ") " << all[idx]->title
-            << " | Similar avg: " << avg << " (" << scoreCount[idx] << " ratings)\n";
+        double avg = scoreSum[idx] / scoreCount[idx];
+
+        std::cout << (i + 1) << ". " << all[idx]->title << "\n";
+        std::cout << "   Similar users’ average rating: " << avg << "\n";
+        std::cout << "   Based on " << scoreCount[idx] << " similar rating(s)\n\n";
     }
+
     std::cout.unsetf(std::ios::floatfield);
+    std::cout << "Tip: Recommendations improve as more reviews are added.\n";
 
     delete[] ratedGameIds;
     delete[] likedGameIds;
