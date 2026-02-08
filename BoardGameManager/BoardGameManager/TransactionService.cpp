@@ -2,6 +2,8 @@
 #include <iostream>
 #include <ctime>
 
+static void printEventLine(const BorrowEvent& e, MemberService* ms, GameService* gs);
+
 // Helper functions for borrowed list (Member owns list)
 static bool hasBorrowedGame(Member* member, int gameId) {
     BorrowedNode* cur = member->borrowedHead;
@@ -124,6 +126,25 @@ static void printBorrowedByMember(MemberService* ms, GameService* gs) {
 
     if (!any) {
         std::cout << "No active borrowed games.\n";
+    }
+}
+
+static void printReturnedByMemberHistory(CircularQueue& eventLog, MemberService* ms, GameService* gs) {
+    // Ray Feature: Show return-history entries grouped by event log order.
+    bool any = false;
+
+    for (int i = 0; i < eventLog.getCount(); i++) {
+        BorrowEvent e;
+        if (!eventLog.getAt(i, e) || e.action != ACTION_RETURN) {
+            continue;
+        }
+
+        any = true;
+        printEventLine(e, ms, gs);
+    }
+
+    if (!any) {
+        std::cout << "No return events recorded yet.\n";
     }
 }
 
@@ -256,6 +277,7 @@ Status TransactionService::returnGame(int memberId, int gameId) {
 }
 
 void TransactionService::adminBorrowReturnSummary() {
+    // Ray Feature: Admin summary of borrow/return counts and member activity.
     // Phase 0: simple counts from event log
     int borrowCount = 0;
     int returnCount = 0;
@@ -286,6 +308,9 @@ void TransactionService::adminBorrowReturnSummary() {
     std::cout << "Borrowed items by member:\n";
     printBorrowedByMember(memberService, gameService);
 
+    std::cout << "Returned items by member (history):\n";
+    printReturnedByMemberHistory(eventLog, memberService, gameService);
+
     std::cout << "Recent events (last 10):\n";
     if (eventLog.getCount() == 0) {
         std::cout << "None\n";
@@ -303,6 +328,7 @@ void TransactionService::adminBorrowReturnSummary() {
 }
 
 void TransactionService::memberBorrowReturnSummary(int memberId) {
+    // Ray Feature: Member-facing summary of personal borrow/return activity.
     // Phase 0: filter by memberId from event log
     if (memberService == nullptr) {
         std::cout << "Member data unavailable.\n";
@@ -339,6 +365,19 @@ void TransactionService::memberBorrowReturnSummary(int memberId) {
     std::cout << "Currently borrowed: " << currentBorrowed << "\n";
     std::cout << "Borrowed games: ";
     printBorrowedGames(member, gameService);
+
+    std::cout << "Returned games (history):\n";
+    bool hasReturnHistory = false;
+    for (int i = 0; i < eventLog.getCount(); i++) {
+        BorrowEvent e;
+        if (eventLog.getAt(i, e) && e.memberId == memberId && e.action == ACTION_RETURN) {
+            hasReturnHistory = true;
+            printEventLine(e, memberService, gameService);
+        }
+    }
+    if (!hasReturnHistory) {
+        std::cout << "None\n";
+    }
 
     std::cout << "Recent events (last 10):\n";
     int total = eventLog.getCount();

@@ -4,6 +4,7 @@
 MemberService::MemberService() {}
 
 Status MemberService::addMember(int memberId, const char* name) {
+    // Ray Feature: Add a new member with duplicate-ID validation.
     if (memberId <= 0 || name == nullptr || name[0] == '\0') {
         return INVALID_INPUT;
     }

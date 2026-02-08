@@ -1,10 +1,7 @@
 # BoardGameManager members v3
 MEMBER|2|Thar Htet Shein|4|3
-BORROWED|2|1|12 Days
-BORROWED|2|2|5-Minute Marvel
 MEMBER|4|TheHacker|2|0
 MEMBER|5|The King of hackers|0|0
-BORROWED|5|617|Hacker Royale
 MEMBER|1|Larry|0|0
 REVIEW|2|1|12 Days|10|This game is absolutely gorgeous.
 REVIEW|2|2|5-Minute Marvel|8|
